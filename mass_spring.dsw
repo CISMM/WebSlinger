@@ -3,19 +3,7 @@ Microsoft Developer Studio Workspace File, Format Version 6.00
 
 ###############################################################################
 
-Project: "cube"=.\PC_WIN32\cube\cube.dsp - Package Owner=<4>
-
-Package=<5>
-{{{
-}}}
-
-Package=<4>
-{{{
-}}}
-
-###############################################################################
-
-Project: "webslinger"=.\webslinger.dsp - Package Owner=<4>
+Project: "cube"=.\cube.dsp - Package Owner=<4>
 
 Package=<5>
 {{{
@@ -28,6 +16,18 @@ Package=<4>
 ###############################################################################
 
 Project: "web"=.\web.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Project: "webslinger"=.\webslinger.dsp - Package Owner=<4>
 
 Package=<5>
 {{{
