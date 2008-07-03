@@ -1,0 +1,109 @@
+<html>
+<head>
+<title>WebSlinger</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+</head>
+
+<body bgcolor="#FFFFFF" text="#000000">
+<h1><img src="mainwindow.jpg" width="260" height="273" align="right">WebSlinger</h1>
+<p>The <i>WebSlinger</i> program simulates meshes of nodes (masses) connected 
+  by (linear and non-linear) springs. It enables mouse-based interaction and saving 
+  of node positions during pulling.</p>
+<h2>Configuration File</h2>
+<p>When the program is run, it will open a configuration file to determine the 
+  structure and parameters of the structure to simulate. The default name for 
+  this file is <i>webslinger.cfg</i> and its default location is the directory 
+  where the program was run. You can specify a different configuration file by 
+  running on the command line or by dragging the configuration file and dropping 
+  it onto the <i>WebSlinger</i> program.</p>
+<p>The format of the configuration file is shown below. All lines between the 
+  <i>structure {</i> opening line and the <i>}</i> final line are optional, and 
+  each optional line can appear more than once.</p>
+<pre>structure {
+ mass_damping DAMPING
+ mass_radius RADIUS
+
+
+ mass NAME MASS X Y Z
+ mass NAME MASS X Y Z DAMPING
+ mass NAME MASS X Y Z DAMPING RADIUS
+
+
+ spring_constant_over_length VALUE
+ rest_length_fraction VALUE
+
+
+ spring NAME1 NAME2
+ spring NAME1 NAME2 REST K
+ spring NAME1 NAME2 REST K BREAKING_FORCE
+}</pre>
+<p>The <i>mass_damping</i>, <i>mass_radius</i>, <i>spring_constant_over_length</i>, 
+  and <i>rest_length_fraction</i> lines are parameters that apply to all following 
+  masses or springs. They can be interleaved between mass and spring definitions 
+  to result in different types of masses and springs in the same structure. The 
+  object to which they apply and their default values is shown in the table below:</p>
+<table width="100%" border="1">
+  <tr> 
+    <td><b>Parameter</b></td>
+    <td><b>Applies to</b></td>
+    <td><b>Default Value</b></td>
+    <td><b>Units</b></td>
+  </tr>
+  <tr> 
+    <td>mass_damping</td>
+    <td>mass</td>
+    <td>5</td>
+    <td>f * (pixels/time step)</td>
+  </tr>
+  <tr> 
+    <td>mass_radius</td>
+    <td>mass</td>
+    <td>0</td>
+    <td>pixels</td>
+  </tr>
+  <tr> 
+    <td>spring_const_over_length</td>
+    <td>springs (linear)</td>
+    <td>1</td>
+    <td>f * pixels</td>
+  </tr>
+  <tr> 
+    <td>rest_length_fraction</td>
+    <td>springs (all types)</td>
+    <td>1</td>
+    <td>unitless</td>
+  </tr>
+</table>
+<p>The <b><i>mass_radius</i></b> parameter specifies the displayed radius of all 
+  following masses in pixels. This does not affect the solutions to the simulation; 
+  it is only there to help visualize the web. One approach is to put larger-radius 
+  masses with very large values (1e100) as fixed end-points for webs and smaller-radius 
+  masses at the nodes to make it clear where the mouse can grab the web.</p>
+<p>The <b><i>mass_damping</i></b> parameter specifies how much damping is applied 
+  during the simulation of all following masses. It is the force per unit velocity 
+  that opposed motion. Velocity is in pixels/frame.</p>
+<p>The <b><i>rest_length_fraction</i></b> parameter is used to compute the rest 
+  length of all following springs that do not have their rest length defined. 
+  This is a unitless parameter that indicates that the rest length of the spring 
+  is computed by taking the initial distance between the two masses and multiplying 
+  it by <i>rest_length_fraction</i> to find the rest length of the spring. For 
+  instance, a value of 1.0 (the default) makes the rest length equal to the initial 
+  length, whereas a value of 0.5 makes the rest length half of the initial length 
+  (the spring is initially under tension).</p>
+<p>The <b><i>spring_const_over_length</i></b> parameter is used to calculate the 
+  spring constant of following linear springs whose spring constant is not defined 
+  in the file (the first spring option only takes the names of the two masses 
+  it is connected to). If a spring's spring constant is not specified, then it 
+  is computed as <i>spring_const_over_length / rest_length</i>. </p>
+<p></p>
+<h2>Output File</h2>
+<p>&nbsp;</p>
+<h2>Version History</h2>
+<h3>Version 2.2</h3>
+<ul>
+  <li>This is the first released version of the program. It includes the ability 
+    to open different configuration files and to save the positions of the nodes 
+    in an output file.</li>
+</ul>
+</body>
+</html>

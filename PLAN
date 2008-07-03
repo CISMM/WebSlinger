@@ -1,0 +1,66 @@
+             Our project is the simulation of a flexible string modelled as
+    point masses connected by springs and other objects modelled as point
+    masses.  The user will be able to interact with the other objects by
+    'grabbing' them with the string.  The visual display will be on pxpl4,
+    and the force display will go back through the arm.  The other objects
+    will be constrained by walls around the environment, from which they
+    will rebound.
+
+             There are basically three parts to this project.  The first
+    part is an interface to the force-feedback arm as an input and output
+    device.  The second part is the simulation of the motion of objects.
+    The third part is the display of objects on pxpl4.  The first part is
+    provided by my work with GRIP.  The third part will be done by Phil.
+    The second part will be split between Phil and I.
+
+             I will be working on the simulation of the string and the
+    motion of the masses in the environment.  Phil will be doing most of
+    the work on simulating other forces in the environment, including the
+    boundary conditions.
+
+             Phil will be writing a display server for pxpl4 so that we can
+    run this simulation on another machine.  There exists a server for the
+    arm so we do not have to run it on glycine.  The existence of both
+    servers will mean that input, computation, and output can be done on
+    separate machines, hopefully increasing performance.  We plan to test
+    this on different machine configurations to find the fastest
+    combination.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
