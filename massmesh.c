@@ -26,8 +26,10 @@
 using namespace std;
 
 #ifndef	M_PI
-const double M_PI = 2*acos(0);
+const double M_PI = 2*acos(0.0);
 #endif
+
+#pragma warning( disable : 4996 )
 
 inline	double	sqr(double a) { return a*a; }
 
