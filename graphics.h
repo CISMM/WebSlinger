@@ -12,6 +12,7 @@ extern int getmaxy(void);
 
 extern int draw_masses(const MASS_node *mn);
 extern int draw_springs(const SPRING_node *sn);
+extern int draw_general_springs(const GENERAL_SPRING_node *sn);
 
 typedef void (*Display_Func)(void);
 

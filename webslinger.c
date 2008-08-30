@@ -51,6 +51,7 @@ const double	BBREAK	=	50.0;
 
 static  MASS_node	*mlist = NULL;	/* Points to first node in mass list */
 static  SPRING_node	*slist = NULL;	/* Points to first node in spring list */
+static  GENERAL_SPRING_node	*gslist = NULL;	/* Points to first node in general spring list */
 static  HINGE_node      *hlist = NULL;  /* Points to the first hings in the hinge list */
 
 // Pointers dealing with mouse-based interaction.
@@ -81,16 +82,20 @@ void	simulate_and_draw_meshes(void)
     glClear(GL_COLOR);
   }
 
-  // Draw the masses as spheres and the springs as lines
+  // Draw the masses as spheres and the springs as lines.
+  // General springs in yellow, normal ones in green.
   int j,k;
   for (j = 0; j < DRAWS_PER_FRAME; j++) {
+      glColor3f(0.7,0.7,0);
+      if (draw_general_springs(gslist)) { exit(-2); }
       glColor3f(0,1,0);
       if (draw_springs(slist)) { exit(-1); }
-      if (draw_masses(mlist)) { exit(-2); }
+      if (draw_masses(mlist)) { exit(-3); }
       // XXX Draw hinges?
 
       for (k = 0; k < SIMS_PER_DRAW; k++) {
 	apply_springs(&slist);
+	apply_general_springs(&gslist);
         apply_hinges(hlist);
 
         // If we've grabbed a node from either list, drag it around with us.
@@ -274,7 +279,7 @@ int main(unsigned argc, const char *argv[])
     perror(s);
     exit(-3);
   }
-  if (!parse_structure_from_file(f, &mlist, &slist, &hlist)) {
+  if (!parse_structure_from_file(f, &mlist, &slist, &gslist, &hlist)) {
     fprintf(stderr,"Cannot parse %s\n", infile_name);
     exit(-4);
   }
@@ -291,7 +296,7 @@ int main(unsigned argc, const char *argv[])
   unlink(g_csv_outfile_name);
 
 
-  init_graphics("Webslinger v2.2: Pull with mouse, Q quit, S save coords", display_func);
+  init_graphics("Webslinger v2.3: Pull with mouse, Q quit, S save coords", display_func);
   glutMotionFunc(motionCallbackForGLUT);
   glutMouseFunc(mouseCallbackForGLUT);
   glutKeyboardFunc(keyboardCallbackForGLUT);

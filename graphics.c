@@ -75,6 +75,20 @@ int	draw_springs(const SPRING_node *sn)
     return 0;
 }
 
+int	draw_general_springs(const GENERAL_SPRING_node *sn)
+{
+    if (sn != NULL) {
+	glBegin(GL_LINES);
+	while (sn != NULL) {
+		vertex(sn->m1);
+		vertex(sn->m2);
+		sn = sn->next;
+	}
+	glEnd();
+    }
+    return 0;
+}
+
 int	setup_graphics_frame(void)
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

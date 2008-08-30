@@ -12,8 +12,6 @@
 
 #include  <stdio.h>
 
-/* XXX Finish implementing the GENERAL_SPRING_node;  Read from file, apply
-
 /*	The masses are stored in a linked list.  The last mass has a null
  * next pointer.  Each mass points stores its mass, its location, its
  * velocity when last computed, the damping factor (the percent of velocity
@@ -72,8 +70,10 @@ typedef struct  GENERAL_SPRING_ENTRY { /* Used to allow a pointer to this type i
           double force;     /* Force applied at the above strain */
           struct GENERAL_SPRING_ENTRY *next;  /* The next entry in the table */
         } GENERAL_SPRING_TABLE_ENTRY;
+
 typedef struct  GENERAL_SPRING {  /* Used to allow a pointer to this type in struct */
 	  double rest;		/* The rest length of the spring */
+	  double k;		/* The spring constant of the spring */
           GENERAL_SPRING_TABLE_ENTRY  *table; /* Pointer to the table of force/strain */
 	  double fbreak;	/* The force which will break the spring */
 	  MASS_node *m1;	/* One mass attatched to the spring */
@@ -114,12 +114,20 @@ extern	int	add_spring(SPRING_node **headptr,
 			MASS_node *m1, MASS_node *m2,
 			double fbreak = 1e100);
 
+extern	int	add_general_spring(GENERAL_SPRING_node **headptr,
+			double rest,
+			double k,
+                        GENERAL_SPRING_TABLE_ENTRY  *table,
+			MASS_node *m1, MASS_node *m2,
+			double fbreak = 1e100);
+
 extern	int	add_hinge(HINGE_node **headptr,
 			double k,
 			MASS_node *m1, MASS_node *m2, MASS_node *m3);
 
 extern	void	clear_forces(MASS_node *mlist);
 extern	int	apply_springs(SPRING_node **sh);
+extern	int	apply_general_springs(GENERAL_SPRING_node **sh);
 extern	void	apply_hinges(HINGE_node *hh);
 extern	void	apply_plane(MASS_node *mlist, double A, double B, double C, double D, double k);
 extern	void	apply_collisions(MASS_node *m1, MASS_node *m2, double k);
@@ -201,6 +209,14 @@ extern	int	make_capped_cube(MASS_node **mh, SPRING_node **sh,
 //      spring NAME1 NAME2 REST K                 (or)
 //      spring NAME1 NAME2 REST K BREAKING_FORCE
 //      (however many springs)
+//      general_strain_force_curve NAME {
+//        strain force
+//        ...
+//      }
+//      generic_spring NAME1 NAME2 STRAIN_FORCE_CURVE_NAME {Computes based on spring_constant_over_length and rest_length_fraction and mass distance} (or)
+//      generic_spring NAME1 NAME2 STRAIN_FORCE_CURVE_NAME REST K (or)
+//      generic_spring NAME1 NAME2 STRAIN_FORCE_CURVE_NAME REST K BREAKING_FORCE (or)
+//      (however many generic springs)
 //      hinge NAME1 NAME2 NAME3 K
 //      (however many hinges)
 //    }
@@ -208,7 +224,7 @@ extern	int	make_capped_cube(MASS_node **mh, SPRING_node **sh,
 // the beginning of the line following the closing brace.  Returns pointers
 // to the described structure's masses, springs, and hinges in the handles,
 // NULL for each if there were no entries.
-extern  bool    parse_structure_from_file(FILE *f, MASS_node **mh, SPRING_node **sh, HINGE_node **hh);
+extern  bool    parse_structure_from_file(FILE *f, MASS_node **mh, SPRING_node **sh, GENERAL_SPRING_node **gsh, HINGE_node **hh);
 
 //-----------------------------------------------------------------------
 // Functions to move structures.

@@ -33,9 +33,15 @@
  rest_length_fraction VALUE
 
 
+
  spring NAME1 NAME2
  spring NAME1 NAME2 REST K
  spring NAME1 NAME2 REST K BREAKING_FORCE
+
+
+ general_strain_force_curve NAME {<br>   strain force
+   strain force<br> }<br> generic_spring NAME1 NAME2 STRAIN_FORCE_CURVE_NAME
+ generic_spring NAME1 NAME2 STRAIN_FORCE_CURVE_NAME REST K<br> generic_spring NAME1 NAME2 STRAIN_FORCE_CURVE_NAME REST K BREAKING_FORCE
 }</pre>
 <p>The <i>mass_damping</i>, <i>mass_radius</i>, <i>spring_constant_over_length</i>, 
   and <i>rest_length_fraction</i> lines are parameters that apply to all following 
@@ -63,7 +69,7 @@
   </tr>
   <tr> 
     <td>spring_const_over_length</td>
-    <td>springs (linear)</td>
+    <td>springs (all types)</td>
     <td>1</td>
     <td>f * pixels</td>
   </tr>
@@ -72,6 +78,12 @@
     <td>springs (all types)</td>
     <td>1</td>
     <td>unitless</td>
+  </tr>
+  <tr> 
+    <td>general_strain_force_curve</td>
+    <td>generic_spring</td>
+    <td>None</td>
+    <td>unitless, f</td>
   </tr>
 </table>
 <p>The <b><i>mass_radius</i></b> parameter specifies the displayed radius of all 
@@ -94,11 +106,28 @@
   spring constant of following linear springs whose spring constant is not defined 
   in the file (the first spring option only takes the names of the two masses 
   it is connected to). If a spring's spring constant is not specified, then it 
-  is computed as <i>spring_const_over_length / rest_length</i>. </p>
+  is computed as <i>spring_const_over_length / rest_length</i>. When applied to 
+  the <i>general_spring</i> class, this becomes the spring constant without being 
+  divided by the length (because the <i>general_spring</i> class maps strain to 
+  force, and strain is intrinsically independent of length.</p>
+<p>The <b><i>general_strain_force_curve</i></b> specifies the mapping between 
+  strain and force for the <i>generic_spring</i> class. The force curve is given 
+  a name than can then be referred to. Note that you probably want the force to 
+  be 0.0 at a strain of 1.0 (rest length). Note also that at larger strains, you 
+  should probably subtract one from the strain value when computing the force 
+  (to take into account the fact that a strain of 1 is rest length).</p>
 <p></p>
 <h2>Output File</h2>
 <p>&nbsp;</p>
 <h2>Version History</h2>
+<h3>Version 2.3</h3>
+<ul>
+  <li><b><i>Major</i></b> bug fix -- the earlier versions were computing the forces 
+    quadratically for the springs, not linearly. This version has the <i>spring</i> 
+    primitive behaving linearly.</li>
+  <li>This version adds the ability to insert a <i>general_spring</i>, so non-linear 
+    springs can be inserted.</li>
+</ul>
 <h3>Version 2.2</h3>
 <ul>
   <li>This is the first released version of the program. It includes the ability 

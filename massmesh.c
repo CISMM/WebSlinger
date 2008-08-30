@@ -110,6 +110,45 @@ int	add_spring(SPRING_node **headptr, double rest, double k,
 } /* end of add_spring() */
 
 
+/*	This routine will add a general spring to the head of a list of
+ * general springs. It gets a pointer to the pointer to the head of the list.
+ * It will put the new spring at the head of the list.  It works properly if
+ * the head of the list is NULL to begin with.  m1 and m2 should point to
+ * the masses at either end of the spring.
+ *	The function returns -1 on failure and 0 on success.
+ */
+
+int	add_general_spring(GENERAL_SPRING_node **headptr, double rest, double k,
+                           GENERAL_SPRING_TABLE_ENTRY  *table,
+                           MASS_node *m1, MASS_node *m2,
+                           double fbreak)
+{
+	GENERAL_SPRING_node	*news;	/* The new spring node location */
+
+	if ( (m1 == NULL) || (m2 == NULL) ) {
+		perror("add_general_spring (bad mass)");
+		return(-1);	/* BAD MASS */
+	}
+	if ( (news = (GENERAL_SPRING_node *)malloc(sizeof(GENERAL_SPRING_node))) == NULL) {
+		perror("add_general_spring (cannot allocate more memory)");
+		return(-1);	/* FAIL */
+	}
+
+	news->next = *headptr;	/* Place new entry at head of list */
+	*headptr = news;	/* Make the head point to the new one */
+
+	news->rest = rest;	/* Fill in the parameter values */
+	news->k = k;
+        news->table = table,
+	news->fbreak = fbreak;
+	news->m1 = m1;
+	news->m2 = m2;
+
+	return(0);	/* SUCCESS */
+
+} /* end of add_general_spring() */
+
+
 /*	This routine will add a hinge to the head of a list of hinges.
  * It gets a pointer to the pointer to the head of the list.  It will put
  * the new hinge at the head of the list.  It works properly if the head
@@ -215,7 +254,7 @@ int apply_springs(SPRING_node **sh)
      * to its masses.
      */
 
-    scale = - (cur->rest - dist) * cur->k;
+    scale = (dist - cur->rest) * cur->k / dist;
     if (scale >= cur->fbreak) {
       SPRING_node *newnext = cur->next;
       last->next = newnext;
@@ -227,7 +266,7 @@ int apply_springs(SPRING_node **sh)
       cur = newnext;
       continue;
     }
-    scale = scale / 2.0;
+    scale /= 2.0;
     dx *= scale;
     dy *= scale;
     dz *= scale;
@@ -249,6 +288,121 @@ int apply_springs(SPRING_node **sh)
 
   return num_broke;
 } /* end of apply_springs() */
+
+
+/*	This routine will compute the forces applied by all of the general
+ * springs in the spring list.  It adds the force applied by each spring to the
+ * force values of the masses on the ends of the spring.  Once the entire
+ * spring list has been traversed, the effects off all springs will have been
+ * added to the other forces acting on the masses in the mass list.
+ *	This routine is called with a handle so that it can affect even the
+ * first node in a list (to remove a broken spring).  It returns the number
+ * of springs that broke, -1 on failure.
+ *	If a spring breaks while it is being simulated, it is removed from
+ * the list and its memory is freed.  The masses it points to will not have
+ * any forces added to them by the spring.
+ */
+
+int apply_general_springs(GENERAL_SPRING_node **sh)
+{
+  double  dx,dy,dz;	/* The distance vector for the two ends */
+  double  dist;		/* Distance between the two end masses */
+  double  force;        /* Force applied by the spring */
+  int	  num_broke = 0;/* How many springs broke during the run? */
+  GENERAL_SPRING_node *last, *cur;
+
+  last = cur = *sh;
+  while (cur != NULL) {	/* Do for each spring in the list */
+
+    /* Make sure we have a valid table.  If not, no force. */
+    if (cur->table == NULL) {
+      fprintf(stderr,"Empty general spring list!\n");
+      continue;
+    }
+
+    /* Find the distance vector from one to the other */
+    dx = (cur->m2->x) - (cur->m1->x);
+    dy = (cur->m2->y) - (cur->m1->y);
+    dz = (cur->m2->z) - (cur->m1->z);
+
+    /* Find the current length of the spring */
+    dist = sqrt( dx*dx + dy*dy + dz*dz );
+
+    /* Find the force based on the distance vector that will
+     * turn it into a force value.  This is done by calculating
+     * the strain (change in length over rest length) of the
+     * spring and then looking up the corresponding force
+     * (or linearly interpolating) in the force/strain table.
+     * The result is multiplied by the spring constant, k.
+     */
+
+    /* Initialize the force so that if the distance is below
+     * the first table entry we still interpolate correctly.
+     */
+    double strain = dist / cur->rest;
+    GENERAL_SPRING_TABLE_ENTRY *prev = cur->table;
+    GENERAL_SPRING_TABLE_ENTRY *next = cur->table->next;
+    if (strain < prev->strain) {
+      force = prev->force * cur->k;
+    } else do {
+      if (next == NULL) {
+        force = prev->force * cur->k;
+        break;
+      }
+      if (strain > next->strain) {
+        prev = next;
+        next = next->next;
+      } else {
+        double frac = (strain - prev->strain) / (next->strain - prev->strain);
+        force = (frac*next->force + (1.0 - frac)*prev->force) * cur->k;
+        break;
+      }
+    } while (true);
+
+    /* If there is enough force to break the spring, then we
+     * delete this one from the list and don't apply and force
+     * to its masses.
+     */
+    if (force >= cur->fbreak) {
+      GENERAL_SPRING_node *newnext = cur->next;
+      last->next = newnext;
+      delete cur;
+      num_broke++;
+      if (last == cur) { /* Head of the list; make the change stick. */
+	*sh = newnext;
+      }
+      cur = newnext;
+      continue;
+    }
+
+    /* Divide the factor by
+     * two so that half of this force is applied at either end
+     * of the spring.
+     */
+    force /= 2.0;
+
+    /* Normalize the distance vector and multiply by force */
+    double fx = dx / dist * force;
+    double fy = dy / dist * force;
+    double fz = dz / dist * force;
+
+    /* Apply the force to each end of the spring.  Note that
+     * the force is opposite at each end.
+     */
+
+    cur->m1->fx += fx;
+    cur->m1->fy += fy;
+    cur->m1->fz += fz;
+    cur->m2->fx -= fx;
+    cur->m2->fy -= fy;
+    cur->m2->fz -= fz;
+
+    last = cur;
+    cur = cur->next;	/* Next spring in the list */
+  }
+
+  return num_broke;
+} /* end of apply_general_springs() */
 
 
 /*	This routine will add the values of the forces applied by the
@@ -928,7 +1082,7 @@ void  translate_masses(MASS_node *mlist, double x, double y, double z)
   }
 }
 
-// Helper class and functions for the next function.
+// Helper classes and functions for the next function.
 class MASS_NAME {
 public:
   MASS_NAME(const char *name, MASS_node *node) {
@@ -961,6 +1115,38 @@ MASS_node *lookup_mass_node(const vector<MASS_NAME> n, const char *name)
   return NULL;
 }
 
+class FORCE_CURVE_NAME {
+public:
+  FORCE_CURVE_NAME(const char *name, GENERAL_SPRING_TABLE_ENTRY *table) {
+    strncpy(d_name, name, sizeof(d_name)-1);
+    d_name[sizeof(d_name)-1] = '\0';
+    d_table = table;
+  }
+  const char *name() const { return d_name; }
+  GENERAL_SPRING_TABLE_ENTRY *table() const { return d_table; }
+
+protected:
+  char        d_name[1024];
+  GENERAL_SPRING_TABLE_ENTRY   *d_table;
+};
+
+// Look up the force curve with the specified name in the vector of
+// curves.  Return a pointer to the table in the curve, or NULL if there
+// was not one with this name.
+GENERAL_SPRING_TABLE_ENTRY *lookup_force_curve(const vector<FORCE_CURVE_NAME> n, const char *name)
+{
+  vector<FORCE_CURVE_NAME>::const_iterator i;
+  for (i = n.begin(); i != n.end(); i++) {
+    if (strcmp(name, i->name()) == NULL) {
+      // Found it!
+      return i->table();
+    }
+  }
+
+  // Didn't find it.
+  return NULL;
+}
+
 // Read in a description of a single structure from a file; this includes
 // reading in named masses, springs to connect masses, and hinges to connect
 // triples of masses.  The format of the data in the file is:
@@ -976,6 +1162,14 @@ MASS_node *lookup_mass_node(const vector<MASS_NAME> n, const char *name)
 //      spring NAME1 NAME2 REST K                 (or)
 //      spring NAME1 NAME2 REST K BREAKING_FORCE
 //      (however many springs)
+//      generic_strain_force_curve NAME {
+//        strain force
+//        ...
+//      }
+//      generic_spring NAME1 NAME2 STRAIN_FORCE_CURVE_NAME {Computes based on spring_constant_over_length and rest_length_fraction and mass distance} (or)
+//      generic_spring NAME1 NAME2 STRAIN_FORCE_CURVE_NAME REST K (or)
+//      generic_spring NAME1 NAME2 STRAIN_FORCE_CURVE_NAME REST K BREAKING_FORCE (or)
+//      (however many generic springs)
 //      hinge NAME1 NAME2 NAME3 K
 //      (however many hinges)
 //    }
@@ -983,7 +1177,7 @@ MASS_node *lookup_mass_node(const vector<MASS_NAME> n, const char *name)
 // the beginning of the line following the closing brace.  Returns pointers
 // to the described structure's masses, springs, and hinges in the handles,
 // NULL for each if there were no entries.
-bool    parse_structure_from_file(FILE *f, MASS_node **mh, SPRING_node **sh, HINGE_node **hh)
+bool    parse_structure_from_file(FILE *f, MASS_node **mh, SPRING_node **sh, GENERAL_SPRING_node **gsh, HINGE_node **hh)
 {
   // Variables used to help parse lines.  The line itself is NULL-terminated in case
   // we get a line in the file that is too long and fgets() doesn't read the NULL
@@ -992,12 +1186,16 @@ bool    parse_structure_from_file(FILE *f, MASS_node **mh, SPRING_node **sh, HIN
   line[sizeof(line)-1] = '\0';
   char s1[1024], s2[1024];
 
-  // The linked lists used to build up the structure.  Also a linked mass-name
-  // list that holds names and pointers to the masses to which they belong.
+  // The linked lists used to build up the structure.  Also a name lists
+  // that hold names and pointers to the objects to which they belong.
+  
   vector<MASS_NAME> mass_names;
-
   MASS_node   *masses = NULL;
   SPRING_node *springs = NULL;
+
+  vector<FORCE_CURVE_NAME> force_curve_names;
+  GENERAL_SPRING_node *general_springs = NULL;
+  
   HINGE_node  *hinges = NULL;
 
   // Default values for constants that can be overridden in the file
@@ -1143,12 +1341,117 @@ bool    parse_structure_from_file(FILE *f, MASS_node **mh, SPRING_node **sh, HIN
       // told the distance.
       if (ret == 3) {
         rest_len = mass_distance(m1, m2) * rest_length_fraction;
-        k = spring_constant_over_length / rest_len;
+        k = spring_constant_over_length / mass_distance(m1, m2);
       }
 
       // Add the specified spring.
       if (add_spring(&springs, rest_len, k, m1, m2, breaking_force) != 0) {
         fprintf(stderr,"parse_structure_from_file: Could not add spring\n");
+        return false;
+      }
+
+    } else if (strcmp(s1, "general_strain_force_curve") == 0) {
+
+      // Got a general strain force curve line.  Create a new list and fill
+      // it with the strain and force entries found in the following lines.  Remember
+      // that the first string in the line will be the keyword itself, which should
+      // be skipped.
+      char name[1024];
+      int ret;
+      if ( (ret = sscanf(line, "%s %s",
+                 s1, name)) < 2) {
+        fprintf(stderr,"parse_structure_from_file: Bad general_strain_force_curve line: %s\n", line);
+        return false;
+      }
+
+      // Read in lines that have "strain force" on them until we get to a line
+      // that just has a closing brace.  Add each to the end of the current force
+      // curve table.  Tack each new entry onto the end of the current list.
+      GENERAL_SPRING_TABLE_ENTRY *curve = NULL;
+      GENERAL_SPRING_TABLE_ENTRY **next = &curve;
+      while (true) {
+        if (fgets(line, sizeof(line)-1, f) == NULL) {
+          fprintf(stderr,"parse_structure_from_file: End of general_strain_force_curve not found\n");
+          return false;
+        }
+
+        if (strchr(line, '}') != NULL) {
+          // End of the list!
+          break;
+        }
+
+        double strain, force;
+        if (sscanf(line, "%lg %lg", &strain, &force) != 2) {
+          fprintf(stderr,"parse_structure_from_file: Bad general_strain_force_curve entry: %s\n", line);
+          return false;
+        }
+
+	if ( (*next = (GENERAL_SPRING_TABLE_ENTRY *)malloc(sizeof(GENERAL_SPRING_TABLE_ENTRY))) == NULL ) {
+		perror("parse_structure_from_file (cannot allocate more memory)");
+		return(false);	/* FAIL */
+	}
+        (*next)->force = force;
+        (*next)->strain = strain;
+        (*next)->next = NULL;
+        next = &((*next)->next);
+      }
+      
+      // Make sure we don't already have a curve with this name.
+      if (lookup_force_curve(force_curve_names, name) != NULL) {
+        fprintf(stderr, "parse_structure_from_file: Force curve name repeated: %s\n", name);
+        return false;
+      }
+
+      // Good name, go ahead and add the new curve.
+      force_curve_names.push_back(FORCE_CURVE_NAME(name, curve));
+
+    } else if (strcmp(s1, "general_spring") == 0) {
+
+      // Got a general spring line.  Read its parameters, then create a
+      // new spring and add it to the spring list.  Remember
+      // that the first string in the line will be the keyword itself, which should
+      // be skipped.  Remember that breaking_force is an optional parameter.
+      char mass1[1024], mass2[1024], force_curve[1024];
+      double rest_len, k, breaking_force = 1e100;
+      int ret;
+      if ( (ret = sscanf(line, "%s %s %s %s %lg %lg %lg",
+                 s1, mass1, mass2, force_curve, &rest_len, &k, &breaking_force)) < 4) {
+        fprintf(stderr,"parse_structure_from_file: Bad general spring line: %s\n", line);
+        return false;
+      }
+      if (ret == 5) {
+        fprintf(stderr,"parse_structure_from_file: Bad general spring line: %s\n", line);
+        return false;
+      }
+      
+      // Locate the named masses.
+      MASS_node *m1, *m2;
+      m1 = lookup_mass_node(mass_names, mass1);
+      m2 = lookup_mass_node(mass_names, mass2);
+      if ( (m1 == NULL) || (m2 == NULL) ) {
+        fprintf(stderr,"parse_structure_from_file: Could not find masses: %s %s\n", mass1, mass2);
+        return false;
+      }
+
+      // Locate the force curve
+      GENERAL_SPRING_TABLE_ENTRY *fc = lookup_force_curve(force_curve_names, force_curve);
+      if (fc == NULL) {
+        fprintf(stderr,"parse_structure_from_file: Could not find force curve: %s\n", force_curve);
+        return false;
+      }
+
+      // Compute the rest length based on distance if we weren't told the distance.
+      // Set the spring constant to the spring constant per unit distance because the
+      // strain/force curve already takes into account the distance division, it is
+      // an intrinsic property of the material.
+      if (ret == 4) {
+        rest_len = mass_distance(m1, m2) * rest_length_fraction;
+        k = spring_constant_over_length;
+      }
+
+      // Add the specified spring.
+      if (add_general_spring(&general_springs, rest_len, k, fc, m1, m2, breaking_force) != 0) {
+        fprintf(stderr,"parse_structure_from_file: Could not add general spring\n");
         return false;
       }
 
@@ -1168,6 +1471,7 @@ bool    parse_structure_from_file(FILE *f, MASS_node **mh, SPRING_node **sh, HIN
   // Put the array values into the return parameters.
   *mh = masses;
   *sh = springs;
+  *gsh = general_springs;
   *hh = hinges;
   return true;
 }
