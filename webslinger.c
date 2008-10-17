@@ -53,6 +53,7 @@ static  MASS_node	*mlist = NULL;	/* Points to first node in mass list */
 static  SPRING_node	*slist = NULL;	/* Points to first node in spring list */
 static  GENERAL_SPRING_node	*gslist = NULL;	/* Points to first node in general spring list */
 static  HINGE_node      *hlist = NULL;  /* Points to the first hings in the hinge list */
+static  STEP_AND_SAVE   step_and_save;  // Stores the step-and-save path, if any.
 
 // Pointers dealing with mouse-based interaction.
 static MASS_node *mouse_mlist = NULL;
@@ -120,13 +121,6 @@ void	simulate_and_draw(void)
 
 } /* end of simulation and drawing loop */
 
-void display_func(void)
-{
-  simulate_and_draw();
-  glutPostRedisplay();
-  glutSwapBuffers();
-}
-
 void keyboardCallbackForGLUT(unsigned char key, int x, int y)
 {
   switch (key) {
@@ -167,6 +161,54 @@ void keyboardCallbackForGLUT(unsigned char key, int x, int y)
 
       break;
   }
+}
+
+void display_func(void)
+{
+  // If we have a non-empty name for the step_and_save path, go ahead and do this
+  // stepping and saving.
+  if (step_and_save.file_name != NULL) {
+    g_csv_outfile_name = step_and_save.file_name;
+    unlink(g_csv_outfile_name);
+    g_csv_frame_number = 0;
+
+    // Simulate as many steps as we should relax for, to give the initial
+    // configuration time to settle.
+    unsigned i;
+    for (i = 0; i < step_and_save.relax_frames; i++) {
+      simulate_and_draw();
+      glutSwapBuffers();
+    }
+
+    // Save the initial frame (first frame should be before move).
+    keyboardCallbackForGLUT('S', 0, 0);
+
+    // Move the steps
+    unsigned j;
+    for (j = 0; j < step_and_save.num_steps; j++) {
+      // Move the mass.
+      step_and_save.mass_to_move->x += step_and_save.x_step;
+      step_and_save.mass_to_move->y += step_and_save.y_step;
+
+      // Simulate as many steps as we should relax for,
+      // drawing while this is happening.
+      unsigned i;
+      for (i = 0; i < step_and_save.relax_frames; i++) {
+        simulate_and_draw();
+        glutSwapBuffers();
+      }
+
+      // Save the frame
+      keyboardCallbackForGLUT('S', 0, 0);
+    }
+
+    // We're done with the save.
+    step_and_save.file_name = NULL;
+  }
+
+  simulate_and_draw();
+  glutPostRedisplay();
+  glutSwapBuffers();
 }
 
 // Return the squared distance between the points, useful for
@@ -279,7 +321,8 @@ int main(unsigned argc, const char *argv[])
     perror(s);
     exit(-3);
   }
-  if (!parse_structure_from_file(f, &mlist, &slist, &gslist, &hlist)) {
+  step_and_save.file_name = NULL;
+  if (!parse_structure_from_file(f, &mlist, &slist, &gslist, &hlist, &step_and_save)) {
     fprintf(stderr,"Cannot parse %s\n", infile_name);
     exit(-4);
   }
@@ -295,11 +338,13 @@ int main(unsigned argc, const char *argv[])
   sprintf(g_csv_outfile_name, "%s.csv", infile_name);
   unlink(g_csv_outfile_name);
 
-
-  init_graphics("Webslinger v2.3: Pull with mouse, Q quit, S save coords", display_func);
+  init_graphics("Webslinger v2.4: Pull with mouse, Q quit, S save coords", display_func);
   glutMotionFunc(motionCallbackForGLUT);
   glutMouseFunc(mouseCallbackForGLUT);
   glutKeyboardFunc(keyboardCallbackForGLUT);
+
+  // Go off and let the program do its simulation thing, responding to keyboard and
+  // mouse events.
   glutMainLoop();
 
   // Never gets here, but to keep the compiler happy...

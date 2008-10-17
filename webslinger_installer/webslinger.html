@@ -42,7 +42,8 @@
  general_strain_force_curve NAME {<br>   strain force
    strain force<br> }<br> generic_spring NAME1 NAME2 STRAIN_FORCE_CURVE_NAME
  generic_spring NAME1 NAME2 STRAIN_FORCE_CURVE_NAME REST K<br> generic_spring NAME1 NAME2 STRAIN_FORCE_CURVE_NAME REST K BREAKING_FORCE
-}</pre>
+
+ step_and_save {<br>   file NAME<br>   mass NAME1 DX DY NUM_STEPS<br>   relax COUNT<br> }<br>}</pre>
 <p>The <i>mass_damping</i>, <i>mass_radius</i>, <i>spring_constant_over_length</i>, 
   and <i>rest_length_fraction</i> lines are parameters that apply to all following 
   masses or springs. They can be interleaved between mass and spring definitions 
@@ -85,6 +86,18 @@
     <td>None</td>
     <td>unitless, f</td>
   </tr>
+  <tr>
+    <td>DX, DY</td>
+    <td>step_and_save</td>
+    <td>None</td>
+    <td>pixels</td>
+  </tr>
+  <tr> 
+    <td>COUNT</td>
+    <td>step_and_save</td>
+    <td>None</td>
+    <td>time steps</td>
+  </tr>
 </table>
 <p>The <b><i>mass_radius</i></b> parameter specifies the displayed radius of all 
   following masses in pixels. This does not affect the solutions to the simulation; 
@@ -116,10 +129,22 @@
   be 0.0 at a strain of 1.0 (rest length). Note also that at larger strains, you 
   should probably subtract one from the strain value when computing the force 
   (to take into account the fact that a strain of 1 is rest length).</p>
+<p>The <b><i>step_and_save</i></b> entry will cause the program to go through 
+  an automatic simulation sequence when it starts up. It will run <i>COUNT</i> 
+  simulations steps to let things settle, then save to file <i>NAME</i> the masses. 
+  It will then move the specified mass <i>NAME1</i> by the number of pixels specified 
+  in <i>DX</i>, <i>DY</i> and do this again. This is repeated for <i>NUM_STEPS</i> 
+  times, and then the simulation enters interactive mode.</p>
 <p></p>
 <h2>Output File</h2>
 <p>&nbsp;</p>
 <h2>Version History</h2>
+<h3>Version 2.4</h3>
+<ul>
+  <li>This version adds the ability to describe a step-and-save trajectory where 
+    one of the masses is moved by a fixed amount between steps and then the results 
+    are saved into an output file.</li>
+</ul>
 <h3>Version 2.3</h3>
 <ul>
   <li><b><i>Major</i></b> bug fix -- the earlier versions were computing the forces 

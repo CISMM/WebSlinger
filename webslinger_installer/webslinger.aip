@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<DOCUMENT type="Advanced Installer" CreateVersion="6.1" version="6.1" modules="freeware" RootPath="." Language="en">
+<DOCUMENT type="Advanced Installer" CreateVersion="6.1" version="6.6" modules="freeware" RootPath="." Language="en">
   <COMPONENT cid="caphyon.advinst.msicomp.MsiPropsComponent">
     <ROW Property="AI_UPGRADE" Value="No"/>
     <ROW Property="ALLUSERS" Value="2"/>
@@ -7,10 +7,10 @@
     <ROW Property="BannerBitmap" Value="default_banner.bmp" Type="1"/>
     <ROW Property="DialogBitmap" Value="default_dialog.bmp" Type="1"/>
     <ROW Property="Manufacturer" Value="NSRG" ValueLocId="*"/>
-    <ROW Property="ProductCode" Value="1033:{71A30EAB-9703-48A5-B3A8-A469918544DC} "/>
+    <ROW Property="ProductCode" Value="1033:{B8EEA097-DF5E-4EB0-AE72-586A8AF75522} "/>
     <ROW Property="ProductLanguage" Value="1033"/>
     <ROW Property="ProductName" Value="WebSlinger" ValueLocId="*"/>
-    <ROW Property="ProductVersion" Value="2.3.0"/>
+    <ROW Property="ProductVersion" Value="2.4.0"/>
     <ROW Property="SecureCustomProperties" Value="OLDPRODUCTS;AI_NEWERPRODUCTFOUND"/>
     <ROW Property="UpgradeCode" Value="{CCFB49C9-6157-4138-A545-6DF112ACEA45}"/>
   </COMPONENT>
@@ -21,10 +21,10 @@
     <ROW Directory="TARGETDIR" DefaultDir="SourceDir"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiCompsComponent">
-    <ROW Component="SHORTCUTDIR" ComponentId="{52A29C7D-5B3B-491F-BE4A-13AEC1CFBA23}" Directory_="SHORTCUTDIR" Attributes="0"/>
-    <ROW Component="mainwindow.jpg" ComponentId="{627F3E0D-491E-4351-BD95-3C472A41DB8E}" Directory_="APPDIR" Attributes="0" KeyPath="mainwindow.jpg" FullKeyPath="APPDIR"/>
-    <ROW Component="webslinger.exe" ComponentId="{4424B1EC-F32A-4A82-9247-B42867FD31CB}" Directory_="APPDIR" Attributes="0" KeyPath="webslinger.exe" FullKeyPath="APPDIR\webslinger.exe"/>
-    <ROW Component="webslinger.html" ComponentId="{EB3AFAA2-924F-4890-87A2-608DC1CECD80}" Directory_="APPDIR" Attributes="0" KeyPath="webslinger.html" FullKeyPath="APPDIR\webslinger.html"/>
+    <ROW Component="SHORTCUTDIR" ComponentId="{2269A8EB-114F-442B-AB89-FB35CE5CCADD}" Directory_="SHORTCUTDIR" Attributes="0"/>
+    <ROW Component="mainwindow.jpg" ComponentId="{36FD85F0-BA78-4BA8-9498-D8CA9500CBF6}" Directory_="APPDIR" Attributes="0" KeyPath="mainwindow.jpg" Type="0"/>
+    <ROW Component="webslinger.exe" ComponentId="{A94412C0-4FF0-4400-8A13-94AED3146C92}" Directory_="APPDIR" Attributes="0" KeyPath="webslinger.exe"/>
+    <ROW Component="webslinger.html" ComponentId="{20F3ECB2-DCAE-406D-9FD7-016B46571FDE}" Directory_="APPDIR" Attributes="0" KeyPath="webslinger.html" Type="0"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiFeatsComponent">
     <ROW Feature="MainFeature" Title="MainFeature" Description="Description" Display="1" Level="1" Directory_="APPDIR" Attributes="0" Components="mainwindow.jpg webslinger.exe SHORTCUTDIR webslinger.html"/>
@@ -35,6 +35,7 @@
     <ROW File="mainwindow.jpg" Component_="mainwindow.jpg" FileName="mainwi~1.jpg|mainwindow.jpg" Attributes="0" SourcePath="mainwindow.jpg" SelfReg="false" Sequence="1"/>
     <ROW File="quadratic_web.cfg" Component_="mainwindow.jpg" FileName="quadra~1.cfg|quadratic_web.cfg" Attributes="0" SourcePath="..\quadratic_web.cfg" SelfReg="false" Sequence="11"/>
     <ROW File="test.cfg" Component_="mainwindow.jpg" FileName="test.cfg" Attributes="0" SourcePath="..\test.cfg" SelfReg="false" Sequence="10"/>
+    <ROW File="test_step_and_save.cfg" Component_="mainwindow.jpg" FileName="test_s~1.cfg|test_step_and_save.cfg" Attributes="0" SourcePath="..\test_step_and_save.cfg" SelfReg="false" Sequence="13"/>
     <ROW File="webicon16.bmp" Component_="mainwindow.jpg" FileName="webico~1.bmp|webicon16.bmp" Attributes="0" SourcePath="webicon16.bmp" SelfReg="false" Sequence="2"/>
     <ROW File="webicon32.bmp" Component_="mainwindow.jpg" FileName="webico~2.bmp|webicon32.bmp" Attributes="0" SourcePath="webicon32.bmp" SelfReg="false" Sequence="3"/>
     <ROW File="webicon48.bmp" Component_="mainwindow.jpg" FileName="webico~3.bmp|webicon48.bmp" Attributes="0" SourcePath="webicon48.bmp" SelfReg="false" Sequence="4"/>
@@ -45,22 +46,22 @@
     <ROW File="webslinger.ico" Component_="mainwindow.jpg" FileName="websli~1.ico|webslinger.ico" Attributes="0" SourcePath="webslinger.ico" SelfReg="false" Sequence="7"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.BuildComponent">
-    <ROW BuildKey="DefaultBuild" BuildName="DefaultBuild" BuildOrder="1" BuildType="0" PackageName="webslinger.2.3.0" InstallationType="4"/>
+    <ROW BuildKey="DefaultBuild" BuildName="DefaultBuild" BuildOrder="1" BuildType="0" PackageName="webslinger.2.4.0" Languages="en" InstallationType="4"/>
     <ATTRIBUTE name="CurrentBuild" value="DefaultBuild"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.DictionaryComponent">
-    <ROW Path="&lt;ui.ail&gt;"/>
-    <ROW Path="&lt;ui_en.ail&gt;"/>
+    <ROW Path="&lt;AI_DICTS&gt;ui.ail"/>
+    <ROW Path="&lt;AI_DICTS&gt;ui_en.ail"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.FragmentComponent">
-    <ROW Fragment="FolderDlg.aip" Path="&lt;FolderDlg.aip&gt;"/>
-    <ROW Fragment="StaticUIStrings.aip" Path="&lt;StaticUIStrings.aip&gt;"/>
-    <ROW Fragment="UI.aip" Path="&lt;UI.aip&gt;"/>
+    <ROW Fragment="FolderDlg.aip" Path="&lt;AI_FRAGS&gt;FolderDlg.aip"/>
+    <ROW Fragment="StaticUIStrings.aip" Path="&lt;AI_FRAGS&gt;StaticUIStrings.aip"/>
+    <ROW Fragment="UI.aip" Path="&lt;AI_FRAGS&gt;UI.aip"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiBinaryComponent">
-    <ROW Name="aicustact.dll" SourcePath="&lt;aicustact.dll&gt;"/>
-    <ROW Name="default_banner.bmp" SourcePath="&lt;default-banner.bmp&gt;"/>
-    <ROW Name="default_dialog.bmp" SourcePath="&lt;default-dialog.bmp&gt;"/>
+    <ROW Name="aicustact.dll" SourcePath="&lt;AI_CUSTACTS&gt;aicustact.dll"/>
+    <ROW Name="default_banner.bmp" SourcePath="&lt;AI_RES&gt;default-banner.bmp"/>
+    <ROW Name="default_dialog.bmp" SourcePath="&lt;AI_RES&gt;default-dialog.bmp"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiControlComponent">
     <ATTRIBUTE name="FixedSizeBitmaps" value="0"/>
@@ -69,7 +70,7 @@
     <ROW Dialog_="FolderDlg" Control_="Back" Event="NewDialog" Argument="WelcomeDlg" Condition="AI_INSTALL" Ordering="1"/>
     <ROW Dialog_="WelcomeDlg" Control_="Next" Event="NewDialog" Argument="FolderDlg" Condition="AI_INSTALL" Ordering="1"/>
     <ROW Dialog_="VerifyReadyDlg" Control_="Back" Event="NewDialog" Argument="FolderDlg" Condition="AI_INSTALL" Ordering="1"/>
-    <ROW Dialog_="FolderDlg" Control_="Next" Event="NewDialog" Argument="VerifyReadyDlg" Condition="AI_INSTALL" Ordering="8"/>
+    <ROW Dialog_="FolderDlg" Control_="Next" Event="NewDialog" Argument="VerifyReadyDlg" Condition="AI_INSTALL" Ordering="10"/>
     <ROW Dialog_="MaintenanceTypeDlg" Control_="Back" Event="NewDialog" Argument="MaintenanceWelcomeDlg" Condition="AI_MAINT" Ordering="1"/>
     <ROW Dialog_="MaintenanceWelcomeDlg" Control_="Next" Event="NewDialog" Argument="MaintenanceTypeDlg" Condition="AI_MAINT" Ordering="2"/>
     <ROW Dialog_="VerifyReadyDlg" Control_="Back" Event="NewDialog" Argument="PatchWelcomeDlg" Condition="AI_PATCH" Ordering="1"/>
@@ -87,7 +88,7 @@
     <ROW Action="SET_TARGETDIR_TO_APPDIR" Type="51" Source="TARGETDIR" Target="[APPDIR]"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiIconsComponent">
-    <ROW Name="SystemFolder_msiexec.exe" SourcePath="&lt;uninstall.ico&gt;" Index="0"/>
+    <ROW Name="SystemFolder_msiexec.exe" SourcePath="&lt;AI_RES&gt;uninstall.ico" Index="0"/>
     <ROW Name="webslinger.exe" SourcePath="webslinger.ico" Index="0"/>
     <ROW Name="webslinger_1.exe" SourcePath="..\..\..\..\Personal\FUN\GRAPHC\webslinger_installer\webslinger.ico" Index="0"/>
   </COMPONENT>
@@ -103,10 +104,11 @@
     <ROW Shortcut="Manual" Directory_="SHORTCUTDIR" Name="Manual" Component_="webslinger.html" Target="[#webslinger.html]" Hotkey="0" IconIndex="0" ShowCmd="1" WkDir="APPDIR"/>
     <ROW Shortcut="Quadratic_web" Directory_="SHORTCUTDIR" Name="Quadra~1|Quadratic web" Component_="webslinger.exe" Target="[#webslinger.exe]" Arguments="quadratic_web.cfg" Hotkey="0" Icon_="webslinger_1.exe" IconIndex="0" ShowCmd="1" WkDir="APPDIR"/>
     <ROW Shortcut="Shortcut_to_webslinger.exe" Directory_="SHORTCUTDIR" Name="Cubicw~1|Cubic web" Component_="webslinger.exe" Target="[#webslinger.exe]" Arguments="cubic_web.cfg" Hotkey="0" Icon_="webslinger_1.exe" IconIndex="0" ShowCmd="1" WkDir="APPDIR"/>
+    <ROW Shortcut="Shortcut_to_webslinger.exe_1" Directory_="SHORTCUTDIR" Name="Step-a~1|Step-and-save test" Component_="webslinger.exe" Target="[#webslinger.exe]" Arguments="test_step_and_save.cfg" Hotkey="0" Icon_="webslinger_1.exe" IconIndex="0" ShowCmd="1" WkDir="APPDIR"/>
     <ROW Shortcut="Test_configuration" Directory_="SHORTCUTDIR" Name="Testco~2|Test configuration" Component_="webslinger.exe" Target="[#webslinger.exe]" Arguments="test.cfg" Hotkey="0" Icon_="webslinger_1.exe" IconIndex="0" ShowCmd="1" WkDir="APPDIR"/>
     <ROW Shortcut="Uninstall" Directory_="SHORTCUTDIR" Name="Uninst~1|Uninstall" Component_="mainwindow.jpg" Target="[SystemFolder]msiexec.exe" Arguments="/x [ProductCode]" Hotkey="0" Icon_="SystemFolder_msiexec.exe" IconIndex="0" ShowCmd="1"/>
     <ROW Shortcut="WebSlinger" Directory_="SHORTCUTDIR" Name="WebSli~2|WebSlinger" Component_="webslinger.exe" Target="[#webslinger.exe]" Hotkey="0" Icon_="webslinger.exe" IconIndex="0" ShowCmd="1" WkDir="APPDIR"/>
-    <ROW Shortcut="WebSlinger_ProductVersion" Directory_="DesktopFolder" Name="WebSli~1.0|WebSlinger 2.3.0" Component_="webslinger.exe" Target="[#webslinger.exe]" Hotkey="0" Icon_="webslinger.exe" IconIndex="0" ShowCmd="1" WkDir="APPDIR"/>
+    <ROW Shortcut="WebSlinger_ProductVersion" Directory_="DesktopFolder" Name="WebSli~2.0|WebSlinger 2.4.0" Component_="webslinger.exe" Target="[#webslinger.exe]" Hotkey="0" Icon_="webslinger.exe" IconIndex="0" ShowCmd="1" WkDir="APPDIR"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiUpgradeComponent">
     <ROW UpgradeCode="[|UpgradeCode]" VersionMax="[|ProductVersion]" Attributes="1025" ActionProperty="OLDPRODUCTS"/>

@@ -164,6 +164,19 @@ extern	void	step_masses(MASS_node *mh,
 			double time,
 			double dx, double dy, double dz);
 
+//    This structure holds information about a mass that is to be moved in a
+// trajectory, with a structure whose positions are to be saved into a file
+// after every step.
+typedef struct {
+        char  *file_name;             // File to hold the trajectory
+        MASS_node *masses_to_save;    // List of masses whose positions are to be saved
+        MASS_node *mass_to_move;      // The mass that is to be moved.
+        double    x_step, y_step;     // How far to move in pixels each frame
+        unsigned  relax_frames;       // How many computational frames to wait before saving
+        unsigned  num_steps;          // How many steps to take
+} STEP_AND_SAVE;
+
+
 //-----------------------------------------------------------------------
 // Helper functions to build structures.
 
@@ -219,12 +232,24 @@ extern	int	make_capped_cube(MASS_node **mh, SPRING_node **sh,
 //      (however many generic springs)
 //      hinge NAME1 NAME2 NAME3 K
 //      (however many hinges)
+//      XXX This is a horrible hack to put here -- we need to decide on a more robust
+//          file format with named structures and trajectories and what-not.  For now,
+//          it is inside the structure but it should not be.  It describes moving the
+//          named mass in the specified trajectory (number of steps in DX,DY), relaxing
+//          some number of frames, and then saving the resulting structure into the file
+//          whose name is given.
+//          saving the resulting
+//      step_and_save {
+//        file NAME
+//        mass NAME1 DX DY NUM_STEPS
+//        relax COUNT
+//      }
 //    }
 // Returns true if the parsing went okay, leaving the file pointer at
 // the beginning of the line following the closing brace.  Returns pointers
 // to the described structure's masses, springs, and hinges in the handles,
 // NULL for each if there were no entries.
-extern  bool    parse_structure_from_file(FILE *f, MASS_node **mh, SPRING_node **sh, GENERAL_SPRING_node **gsh, HINGE_node **hh);
+extern  bool    parse_structure_from_file(FILE *f, MASS_node **mh, SPRING_node **sh, GENERAL_SPRING_node **gsh, HINGE_node **hh, STEP_AND_SAVE *path);
 
 //-----------------------------------------------------------------------
 // Functions to move structures.

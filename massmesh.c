@@ -1172,12 +1172,24 @@ GENERAL_SPRING_TABLE_ENTRY *lookup_force_curve(const vector<FORCE_CURVE_NAME> n,
 //      (however many generic springs)
 //      hinge NAME1 NAME2 NAME3 K
 //      (however many hinges)
+//      XXX This is a horrible hack to put here -- we need to decide on a more robust
+//          file format with named structures and trajectories and what-not.  For now,
+//          it is inside the structure but it should not be.  It describes moving the
+//          named mass in the specified trajectory (number of steps in DX,DY), relaxing
+//          some number of frames, and then saving the resulting structure into the file
+//          whose name is given.
+//          saving the resulting
+//      step_and_save {
+//        file NAME
+//        mass NAME1 DX DY NUM_STEPS
+//        relax COUNT
+//      }
 //    }
 // Returns true if the parsing went okay, leaving the file pointer at
 // the beginning of the line following the closing brace.  Returns pointers
 // to the described structure's masses, springs, and hinges in the handles,
 // NULL for each if there were no entries.
-bool    parse_structure_from_file(FILE *f, MASS_node **mh, SPRING_node **sh, GENERAL_SPRING_node **gsh, HINGE_node **hh)
+bool    parse_structure_from_file(FILE *f, MASS_node **mh, SPRING_node **sh, GENERAL_SPRING_node **gsh, HINGE_node **hh, STEP_AND_SAVE *path)
 {
   // Variables used to help parse lines.  The line itself is NULL-terminated in case
   // we get a line in the file that is too long and fgets() doesn't read the NULL
@@ -1454,6 +1466,79 @@ bool    parse_structure_from_file(FILE *f, MASS_node **mh, SPRING_node **sh, GEN
         fprintf(stderr,"parse_structure_from_file: Could not add general spring\n");
         return false;
       }
+
+    } else if (strcmp(s1, "step_and_save") == 0) {
+
+      // We expect a "file" line first, with the name of the file to save the
+      // resulting trajectory to.
+      if (fgets(line, sizeof(line)-1, f) == NULL) {
+        fprintf(stderr,"parse_structure_from_file: End of file in step_and_save\n");
+        return false;
+      }
+      char keyword[1024], file_name[1024];
+      if (sscanf(line, "%s %s", keyword, file_name) != 2) {
+        fprintf(stderr,"parse_structure_from_file: No bad step_and_save entry file line: %s\n", line);
+        return false;
+      }
+      if (strcmp(keyword, "file") != 0) {
+        fprintf(stderr,"parse_structure_from_file: No file in step_and_save entry: %s\n", line);
+        return false;
+      }
+      path->file_name = new char[strlen(file_name) + 1];
+      if (path->file_name == NULL) {
+        fprintf(stderr,"Out of memory reading step_and_save file name\n");
+        return false;
+      }
+      strcpy(path->file_name, file_name);
+
+      // We expect a "mass" line next, with the name of the mass, its trajectory, and
+      // the number of steps.
+      if (fgets(line, sizeof(line)-1, f) == NULL) {
+        fprintf(stderr,"parse_structure_from_file: End of file in step_and_save\n");
+        return false;
+      }
+      char  mass_name[1024];
+      if (sscanf(line, "%s %s %lg %lg %ud", keyword, mass_name, &(path->x_step), &(path->y_step),
+                 &(path->num_steps)) != 5) {
+        fprintf(stderr,"parse_structure_from_file: No bad step_and_save entry mass line: %s\n", line);
+        return false;
+      }
+      if (strcmp(keyword, "mass") != 0) {
+        fprintf(stderr,"parse_structure_from_file: No mass in step_and_save entry: %s\n", line);
+        return false;
+      }
+      path->masses_to_save = *mh;
+      path->mass_to_move = lookup_mass_node(mass_names, mass_name);
+      if (path->mass_to_move == NULL) {
+        fprintf(stderr,"parse_structure_from_file: Unknown mass in step_and_save entry: %s\n", line);
+        return false;
+      }
+
+      // We expect a "relax" line next, with the count of how many sim steps to do before
+      // saving after each motion step.
+      if (fgets(line, sizeof(line)-1, f) == NULL) {
+        fprintf(stderr,"parse_structure_from_file: End of file in step_and_save\n");
+        return false;
+      }
+      if (sscanf(line, "%s %ud", keyword, &(path->relax_frames)) != 2) {
+        fprintf(stderr,"parse_structure_from_file: No bad step_and_save entry relax line: %s\n", line);
+        return false;
+      }
+      if (strcmp(keyword, "relax") != 0) {
+        fprintf(stderr,"parse_structure_from_file: No relax in step_and_save entry: %s\n", line);
+        return false;
+      }
+
+      // We expect a closing-brace line last.
+      if (fgets(line, sizeof(line)-1, f) == NULL) {
+        fprintf(stderr,"parse_structure_from_file: End of file in step_and_save\n");
+        return false;
+      }
+      if (strchr(line, '}') == NULL) {
+        fprintf(stderr,"parse_structure_from_file: No closing-brace in step_and_save\n");
+        return false;
+      }
+
 
     } else {
       // Didn't recognize the keyword starting this line.
