@@ -157,7 +157,9 @@ void	simulate_and_draw_meshes(void)
           }
 
 	  step_masses(mlist1, 0.0,GACCEL,0.0, TIME, dx,dy,dz);
+          clear_forces(mlist1);
 	  step_masses(mlist2, 0.0,GACCEL,0.0, TIME, dx,dy,dz);
+          clear_forces(mlist2);
 	  loop++;
 	}
     }

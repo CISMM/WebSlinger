@@ -144,9 +144,8 @@ inline double mass_distance(const MASS_node *m1, const MASS_node *m2)
 }
 
 /*	This routine applies the forces that are acting on each mass to the
- * masses.  It then clears the forces for the next iteration.  The position
- * and velocity for each mass is updated by one time step.  The time step is
- * assumed to be a constant times the unit time step.
+ * masses.  The position and velocity for each mass is updated by one time step.
+ * The time step is assumed to be a constant times the unit time step.
  *	The acceleration that is sent as a parameter is added to the
  * acceleration that is caused by the combined force that is
  * already acting on each mass point in the list before the movement for

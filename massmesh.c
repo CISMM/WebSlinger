@@ -694,9 +694,8 @@ void apply_self_collisions(MASS_node *mlist, double k, int skip)
 
 
 /*	This routine applies the forces that are acting on each mass to the
- * masses.  It then clears the forces for the next iteration.  The position
- * and velocity for each mass is updated by one time step.  The time step is
- * assumed to be a constant times the unit time step.
+ * masses.  The position and velocity for each mass is updated by one time step.
+ * The time step is assumed to be a constant times the unit time step.
  *	The acceleration that is sent as a parameter is added to the
  * acceleration that is caused by the combined force that is
  * already acting on each mass point in the list before the movement for
@@ -755,10 +754,6 @@ void	step_masses(MASS_node *mh,
 		mh->x += time*vx;
 		mh->y += time*vy;
 		mh->z += time*vz;
-
-		/* Clear forces for the next go round */
-
-		mh->fx = mh->fy = mh->fz = 0.0;
 
 		mh = mh->next;	/* Go to the next mass */
 	}

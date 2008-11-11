@@ -89,7 +89,9 @@ void	simulate_and_draw_strings(void)
 	  }
 
 	  step_masses(smh, 0.0,GACCEL,0.0, TIME, dx,dy,dz);
+          clear_forces(smh);
 	  step_masses(smh2, 0.0,GACCEL,0.0, TIME, dx,dy,dz);
+          clear_forces(smh2);
 	  loop++;
 	}
     }
@@ -147,6 +149,7 @@ void	simulate_and_draw_breaking(void)
 	  }
 
 	  step_masses(bmh, 0.0,GACCEL,0.0, TIME, dx,dy,dz);
+          clear_forces(bmh);
 	  loop++;
 	}
     }
@@ -216,7 +219,9 @@ void	simulate_and_draw_fat(void)
 	  apply_self_collisions(fmh, 50.0, 4);
 
 	  step_masses(fmh, 0.0,GACCEL,0.0, TIME, dx,dy,dz);
+          clear_forces(fmh);
 	  step_masses(fmh2, 0.0,GACCEL,0.0, TIME, dx,dy,dz);
+          clear_forces(fmh2);
 	  loop++;
 	}
     }
@@ -318,6 +323,7 @@ void	simulate_and_draw_cubes(void)
 		  }
 	  }
 	  step_masses(cmh, 0.0,GACCEL,0.0, TIME, dx,dy,dz);
+          clear_forces(cmh);
 	  loop++;
 	}
     }
@@ -374,6 +380,7 @@ void	simulate_and_draw_snotmatrix(void)
 	  }
 
 	  step_masses(mmh[i], 0.0,GACCEL,0.0, TIME, 0,0,0);
+          clear_forces(mmh[i]);
 	}
 	loop++;
       }

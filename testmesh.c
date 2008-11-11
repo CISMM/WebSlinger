@@ -45,6 +45,7 @@ main()
 		mh->vx= AMP * cos(ANGLE*loop);
 		mh->y = mh->z = mh->vy = mh->vz = 0.0;
 		step_masses(mh, 0.0,-FORCE,0.0, 1.0/120.0, 0.0,0.0,0.0);
+                clear_forces(mh);
 		loop++;
 	}
 	time(&t2);

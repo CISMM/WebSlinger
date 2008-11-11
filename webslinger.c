@@ -95,6 +95,9 @@ void	simulate_and_draw_meshes(void)
       // XXX Draw hinges?
 
       for (k = 0; k < SIMS_PER_DRAW; k++) {
+        // Clear forces before applying so that they will remain set and can
+        // be saved if the user presses 'S'.
+        clear_forces(mlist);
 	apply_springs(&slist);
 	apply_general_springs(&gslist);
         apply_hinges(hlist);
@@ -139,15 +142,16 @@ void keyboardCallbackForGLUT(unsigned char key, int x, int y)
       if (csv_file != NULL) {
         // If this is the first frame, put a header.
         if (g_csv_frame_number == 0) {
-          fprintf(csv_file, "FrameNumber,Spot ID,X,Y,Z,Radius,Orientation (if meaningful),Length (if meaningful), Fit Background (for FIONA), Gaussian Summed Value (for FIONA), Mean Background (FIONA), Summed Value (for FIONA)\n");
+          fprintf(csv_file, "FrameNumber,Spot ID,X,Y,Z,Radius,Orientation (if meaningful),Length (if meaningful), Fit Background (for FIONA), Gaussian Summed Value (for FIONA), Mean Background (FIONA), Summed Value (for FIONA), Force in X, Force in Y, Force in Z\n");
         }
 
         // Store the this frame for all existing masses.
         MASS_node *m = mlist;
         unsigned beadno = 0;
         while (m != NULL) {
-          fprintf(csv_file, "%d, %d, %lg,%lg,%lg, %lg, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0\n",
-            g_csv_frame_number, beadno, m->x, m->y, m->z, m->radius);
+          fprintf(csv_file, "%d, %d, %lg,%lg,%lg, %lg, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, %lg,%lg,%lg\n",
+            g_csv_frame_number, beadno, m->x, m->y, m->z, m->radius,
+            m->fx, m->fy, m->fz);
           m = m->next;
           beadno++;
         }
@@ -338,7 +342,7 @@ int main(unsigned argc, const char *argv[])
   sprintf(g_csv_outfile_name, "%s.csv", infile_name);
   unlink(g_csv_outfile_name);
 
-  init_graphics("Webslinger v2.4: Pull with mouse, Q quit, S save coords", display_func);
+  init_graphics("Webslinger v3.0: Pull with mouse, Q quit, S save coords", display_func);
   glutMotionFunc(motionCallbackForGLUT);
   glutMouseFunc(mouseCallbackForGLUT);
   glutKeyboardFunc(keyboardCallbackForGLUT);

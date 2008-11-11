@@ -114,6 +114,7 @@ void	simulate_and_draw(void)
 	if (mh->y < -(getmaxy()/2*SCREENPART)) dy += WINDCHANGE;
 	if (dy < 0) dy = 0;
 	step_masses(mh, 0.0,GACCEL,0.0, TIME, dx,dy,dz);
+        clear_forces(mh);
 	loop++;
       }
     }
