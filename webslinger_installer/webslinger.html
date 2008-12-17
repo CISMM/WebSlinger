@@ -43,7 +43,7 @@
    strain force<br> }<br> generic_spring NAME1 NAME2 STRAIN_FORCE_CURVE_NAME
  generic_spring NAME1 NAME2 STRAIN_FORCE_CURVE_NAME REST K<br> generic_spring NAME1 NAME2 STRAIN_FORCE_CURVE_NAME REST K BREAKING_FORCE
 
- step_and_save {<br>   file NAME<br>   mass NAME1 DX DY NUM_STEPS<br>   relax COUNT<br> }<br>}</pre>
+ step_and_save {<br>   file NAME<br>   mass NAME1 DX DY NUM_STEPS<br>   follow_mass NAME2 {Zero or more follow_mass lines are allowed; they take the same trajectory}<br>   relax COUNT<br> }<br>}</pre>
 <p>The <i>mass_damping</i>, <i>mass_radius</i>, <i>spring_constant_over_length</i>, 
   and <i>rest_length_fraction</i> lines are parameters that apply to all following 
   masses or springs. They can be interleaved between mass and spring definitions 
@@ -134,11 +134,18 @@
   simulations steps to let things settle, then save to file <i>NAME</i> the masses. 
   It will then move the specified mass <i>NAME1</i> by the number of pixels specified 
   in <i>DX</i>, <i>DY</i> and do this again. This is repeated for <i>NUM_STEPS</i> 
-  times, and then the simulation enters interactive mode.</p>
+  times, and then the simulation enters interactive mode. All <i>follow_mass</i> 
+  entries will be moved by the same trajectory as the original mass.</p>
 <p></p>
 <h2>Output File</h2>
 <p>&nbsp;</p>
 <h2>Version History</h2>
+<h3>Version 3.1</h3>
+<ul>
+  <li>This version enables more than one mass to be moved along the same trajectory.</li>
+</ul>
+<h3></h3>
+<h3></h3>
 <h3>Version 3.0</h3>
 <ul>
   <li>This version stores the force acting on each mass along with the trajectory.</li>

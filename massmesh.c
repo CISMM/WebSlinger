@@ -1177,6 +1177,8 @@ GENERAL_SPRING_TABLE_ENTRY *lookup_force_curve(const vector<FORCE_CURVE_NAME> n,
 //      step_and_save {
 //        file NAME
 //        mass NAME1 DX DY NUM_STEPS
+//        follow_mass NAME2
+//        {Zero or more follow_mass lines are allowed; they take the same trajectory}
 //        relax COUNT
 //      }
 //    }
@@ -1503,18 +1505,42 @@ bool    parse_structure_from_file(FILE *f, MASS_node **mh, SPRING_node **sh, GEN
         return false;
       }
       path->masses_to_save = *mh;
-      path->mass_to_move = lookup_mass_node(mass_names, mass_name);
-      if (path->mass_to_move == NULL) {
+      MASS_node *mass = lookup_mass_node(mass_names, mass_name);
+      if (mass == NULL) {
         fprintf(stderr,"parse_structure_from_file: Unknown mass in step_and_save entry: %s\n", line);
         return false;
       }
+      path->masses_to_move.push_back(mass);
 
-      // We expect a "relax" line next, with the count of how many sim steps to do before
-      // saving after each motion step.
+      // We expect zero or more "follow_mass" lines next, each with the name of the mass.
+      // Keep grabbing lines and parsing them as long as they are follow_mass lines.  If
+      // we find a different line, leave it in the buffer and skip to the next part of
+      // the parsing.
       if (fgets(line, sizeof(line)-1, f) == NULL) {
         fprintf(stderr,"parse_structure_from_file: End of file in step_and_save\n");
         return false;
       }
+      while ( (sscanf(line, "%s %s", keyword, mass_name ) == 2) &&
+              (strcmp(keyword, "follow_mass") == 0) ) {
+        // Find out which mass to move and then append it to the list of masses in
+        // the mass_to_move list.
+        path->masses_to_save = *mh;
+        MASS_node *mass = lookup_mass_node(mass_names, mass_name);
+        if (mass == NULL) {
+          fprintf(stderr,"parse_structure_from_file: Unknown mass in step_and_save entry: %s\n", line);
+          return false;
+        }
+        path->masses_to_move.push_back(mass);
+        if (fgets(line, sizeof(line)-1, f) == NULL) {
+          fprintf(stderr,"parse_structure_from_file: End of file in step_and_save\n");
+          return false;
+        }
+      }
+
+      // We expect a "relax" line next, with the count of how many sim steps to do before
+      // saving after each motion step.  This line will have been read in by the one
+      // above that was searching for zero or more follow_mass lines, so we don't read
+      // another line here.
       if (sscanf(line, "%s %ud", keyword, &(path->relax_frames)) != 2) {
         fprintf(stderr,"parse_structure_from_file: No bad step_and_save entry relax line: %s\n", line);
         return false;

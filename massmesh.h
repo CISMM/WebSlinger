@@ -11,6 +11,7 @@
 #endif
 
 #include  <stdio.h>
+#include  <vector>
 
 /*	The masses are stored in a linked list.  The last mass has a null
  * next pointer.  Each mass points stores its mass, its location, its
@@ -169,7 +170,7 @@ extern	void	step_masses(MASS_node *mh,
 typedef struct {
         char  *file_name;             // File to hold the trajectory
         MASS_node *masses_to_save;    // List of masses whose positions are to be saved
-        MASS_node *mass_to_move;      // The mass that is to be moved.
+        std::vector<MASS_node *>  masses_to_move;    // The masses that are to be moved.
         double    x_step, y_step;     // How far to move in pixels each frame
         unsigned  relax_frames;       // How many computational frames to wait before saving
         unsigned  num_steps;          // How many steps to take
@@ -241,6 +242,8 @@ extern	int	make_capped_cube(MASS_node **mh, SPRING_node **sh,
 //      step_and_save {
 //        file NAME
 //        mass NAME1 DX DY NUM_STEPS
+//        follow_mass NAME2
+//        {Zero or more follow_mass lines are allowed; they take the same trajectory}
 //        relax COUNT
 //      }
 //    }

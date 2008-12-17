@@ -187,12 +187,15 @@ void display_func(void)
     // Save the initial frame (first frame should be before move).
     keyboardCallbackForGLUT('S', 0, 0);
 
-    // Move the steps
+    // Move the masses using the specified steps
     unsigned j;
     for (j = 0; j < step_and_save.num_steps; j++) {
-      // Move the mass.
-      step_and_save.mass_to_move->x += step_and_save.x_step;
-      step_and_save.mass_to_move->y += step_and_save.y_step;
+      // Move the masses.
+      unsigned k;
+      for (k = 0; k < step_and_save.masses_to_move.size(); k++) {
+        step_and_save.masses_to_move[k]->x += step_and_save.x_step;
+        step_and_save.masses_to_move[k]->y += step_and_save.y_step;
+      }
 
       // Simulate as many steps as we should relax for,
       // drawing while this is happening.
@@ -342,7 +345,7 @@ int main(unsigned argc, const char *argv[])
   sprintf(g_csv_outfile_name, "%s.csv", infile_name);
   unlink(g_csv_outfile_name);
 
-  init_graphics("Webslinger v3.0: Pull with mouse, Q quit, S save coords", display_func);
+  init_graphics("Webslinger v3.1: Pull with mouse, Q quit, S save coords", display_func);
   glutMotionFunc(motionCallbackForGLUT);
   glutMouseFunc(mouseCallbackForGLUT);
   glutKeyboardFunc(keyboardCallbackForGLUT);
