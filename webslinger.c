@@ -193,8 +193,9 @@ void display_func(void)
       // Move the masses.
       unsigned k;
       for (k = 0; k < step_and_save.masses_to_move.size(); k++) {
-        step_and_save.masses_to_move[k]->x += step_and_save.x_step;
-        step_and_save.masses_to_move[k]->y += step_and_save.y_step;
+        MASS_MOTION *m = &(step_and_save.masses_to_move[k]);
+        m->mass_to_move->x += m->x_step;
+        m->mass_to_move->y += m->y_step;
       }
 
       // Simulate as many steps as we should relax for,
@@ -345,7 +346,7 @@ int main(unsigned argc, const char *argv[])
   sprintf(g_csv_outfile_name, "%s.csv", infile_name);
   unlink(g_csv_outfile_name);
 
-  init_graphics("Webslinger v3.1: Pull with mouse, Q quit, S save coords", display_func);
+  init_graphics("Webslinger v4.0: Pull with mouse, Q quit, S save coords", display_func);
   glutMotionFunc(motionCallbackForGLUT);
   glutMouseFunc(mouseCallbackForGLUT);
   glutKeyboardFunc(keyboardCallbackForGLUT);

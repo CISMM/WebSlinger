@@ -43,7 +43,8 @@
    strain force<br> }<br> generic_spring NAME1 NAME2 STRAIN_FORCE_CURVE_NAME
  generic_spring NAME1 NAME2 STRAIN_FORCE_CURVE_NAME REST K<br> generic_spring NAME1 NAME2 STRAIN_FORCE_CURVE_NAME REST K BREAKING_FORCE
 
- step_and_save {<br>   file NAME<br>   mass NAME1 DX DY NUM_STEPS<br>   follow_mass NAME2 {Zero or more follow_mass lines are allowed; they take the same trajectory}<br>   relax COUNT<br> }<br>}</pre>
+ step_and_save {<br>   file NAME<br>   num_steps COUNT<br>   relax COUNT<br>   mass NAME1 DX DY<br>   mass NAME2 DX DY
+	...<br> }<br>}</pre>
 <p>The <i>mass_damping</i>, <i>mass_radius</i>, <i>spring_constant_over_length</i>, 
   and <i>rest_length_fraction</i> lines are parameters that apply to all following 
   masses or springs. They can be interleaved between mass and spring definitions 
@@ -140,6 +141,12 @@
 <h2>Output File</h2>
 <p>&nbsp;</p>
 <h2>Version History</h2>
+<h3>Version 4.0</h3>
+<ul>
+  <li>This version modifies the step-and-save syntax and enables the masses to 
+    move in different trajectories.</li>
+</ul>
+<h3></h3>
 <h3>Version 3.1</h3>
 <ul>
   <li>This version enables more than one mass to be moved along the same trajectory.</li>

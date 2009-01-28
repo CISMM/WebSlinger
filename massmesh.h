@@ -168,12 +168,15 @@ extern	void	step_masses(MASS_node *mh,
 // trajectory, with a structure whose positions are to be saved into a file
 // after every step.
 typedef struct {
+    MASS_node *mass_to_move;  // Which mass to move
+    double    x_step, y_step; // How far to move it in pixels each step
+} MASS_MOTION;
+typedef struct {
         char  *file_name;             // File to hold the trajectory
-        MASS_node *masses_to_save;    // List of masses whose positions are to be saved
-        std::vector<MASS_node *>  masses_to_move;    // The masses that are to be moved.
-        double    x_step, y_step;     // How far to move in pixels each frame
-        unsigned  relax_frames;       // How many computational frames to wait before saving
         unsigned  num_steps;          // How many steps to take
+        unsigned  relax_frames;       // How many computational frames to wait before saving
+        MASS_node *masses_to_save;    // List of masses whose positions are to be saved
+        std::vector<MASS_MOTION>  masses_to_move;    // The masses and velocities.
 } STEP_AND_SAVE;
 
 
@@ -241,10 +244,10 @@ extern	int	make_capped_cube(MASS_node **mh, SPRING_node **sh,
 //          saving the resulting
 //      step_and_save {
 //        file NAME
-//        mass NAME1 DX DY NUM_STEPS
-//        follow_mass NAME2
-//        {Zero or more follow_mass lines are allowed; they take the same trajectory}
+//        num_steps NUM_STEPS
 //        relax COUNT
+//        mass NAME1 DX DY
+//        {One or more mass lines are allowed, each with its own trajectory
 //      }
 //    }
 // Returns true if the parsing went okay, leaving the file pointer at
