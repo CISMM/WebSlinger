@@ -1,0 +1,32 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 9.00
+# Visual Studio 2005
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cube", "cube.vcproj", "{0D2BE154-C8C1-4D4A-8CCF-7C5A4431C98D}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "web", "web.vcproj", "{F01C05D7-9B0F-43D8-8E35-9FFAA986EC0E}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "webslinger", "webslinger.vcproj", "{61C3D7D4-953E-473E-BB7A-2E3CFCAF415A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0D2BE154-C8C1-4D4A-8CCF-7C5A4431C98D}.Debug|Win32.ActiveCfg = Debug|Win32
+		{0D2BE154-C8C1-4D4A-8CCF-7C5A4431C98D}.Debug|Win32.Build.0 = Debug|Win32
+		{0D2BE154-C8C1-4D4A-8CCF-7C5A4431C98D}.Release|Win32.ActiveCfg = Release|Win32
+		{0D2BE154-C8C1-4D4A-8CCF-7C5A4431C98D}.Release|Win32.Build.0 = Release|Win32
+		{F01C05D7-9B0F-43D8-8E35-9FFAA986EC0E}.Debug|Win32.ActiveCfg = Debug|Win32
+		{F01C05D7-9B0F-43D8-8E35-9FFAA986EC0E}.Debug|Win32.Build.0 = Debug|Win32
+		{F01C05D7-9B0F-43D8-8E35-9FFAA986EC0E}.Release|Win32.ActiveCfg = Release|Win32
+		{F01C05D7-9B0F-43D8-8E35-9FFAA986EC0E}.Release|Win32.Build.0 = Release|Win32
+		{61C3D7D4-953E-473E-BB7A-2E3CFCAF415A}.Debug|Win32.ActiveCfg = Debug|Win32
+		{61C3D7D4-953E-473E-BB7A-2E3CFCAF415A}.Debug|Win32.Build.0 = Debug|Win32
+		{61C3D7D4-953E-473E-BB7A-2E3CFCAF415A}.Release|Win32.ActiveCfg = Release|Win32
+		{61C3D7D4-953E-473E-BB7A-2E3CFCAF415A}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
