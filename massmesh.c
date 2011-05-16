@@ -418,6 +418,7 @@ int apply_general_springs(GENERAL_SPRING_node **sh)
  * pushing it towards the line between the two end masses.
  *	Note that this routine is called with a pointer to the first node
  * in the hinge list, not with a handle as in add_hinge().
+ *      XXX There is a bug in the hinge code; it causes things to blow up.
  */
 
 void apply_hinges(HINGE_node *hh)
@@ -498,7 +499,6 @@ void apply_hinges(HINGE_node *hh)
 #ifdef	DEBUG
       fprintf(stderr,"Hinge Force1 = %lg, %lg, %lg\n", f1x, f1y, f1z);
 #endif
-
       hh->m1->fx -= f1x;
       hh->m1->fy -= f1y;
       hh->m1->fz -= f1z;
@@ -1165,6 +1165,7 @@ GENERAL_SPRING_TABLE_ENTRY *lookup_force_curve(const vector<FORCE_CURVE_NAME> n,
 //      generic_spring NAME1 NAME2 STRAIN_FORCE_CURVE_NAME REST K (or)
 //      generic_spring NAME1 NAME2 STRAIN_FORCE_CURVE_NAME REST K BREAKING_FORCE (or)
 //      (however many generic springs)
+//      hinge_constant_over_length VALUE {Defaults to 1.0}
 //      hinge NAME1 NAME2 NAME3 K
 //      (however many hinges)
 //      XXX This is a horrible hack to put here -- we need to decide on a more robust
@@ -1212,6 +1213,7 @@ bool    parse_structure_from_file(FILE *f, MASS_node **mh, SPRING_node **sh, GEN
   double mass_damping = 5.0;  //< Damping applied to masses that don't specify it.
   double spring_constant_over_length = 1.0; //< If spring constant calculated based on distance between masses.
   double rest_length_fraction = 1.0; //< Fraction of initial length that is rest length, if sccbodbm
+  double hinge_constant_over_length = 1.0; //< If hinge constant calculated based on distance between masses.
 
   // The first line in the file must have two strings in it, "structure" and "{".
   if (fgets(line, sizeof(line)-1, f) == NULL) {
@@ -1358,6 +1360,53 @@ bool    parse_structure_from_file(FILE *f, MASS_node **mh, SPRING_node **sh, GEN
         fprintf(stderr,"parse_structure_from_file: Could not add spring\n");
         return false;
       }
+
+    } else if (strcmp(s1, "hinge_constant_over_length") == 0) {
+
+      // Find the value for this constant.
+      if (sscanf(line, "%s %lg", s1, &hinge_constant_over_length) != 2) {
+        fprintf(stderr,"parse_structure_from_file: Bad hinge_constant_over_length line: %s\n", line);
+        return false;
+      }
+
+    } else if (strcmp(s1, "hinge") == 0) {
+
+      // Got a hinge line.  Read its parameters, then create a
+      // new hinge and add it to the hinge list.  Remember
+      // that the first string in the line will be the keyword itself, which should
+      // be skipped.  Remember that K is an optional parameter.
+      char mass1[1024], mass2[1024], mass3[1024];
+      double k;
+      int ret;
+      if ( (ret = sscanf(line, "%s %s %s %s %lg",
+                 s1, mass1, mass2, mass3, &k)) < 4) {
+        fprintf(stderr,"parse_structure_from_file: Bad hinge line: %s\n", line);
+        return false;
+      }
+      
+      // Locate the named masses.
+      MASS_node *m1, *m2, *m3;
+      m1 = lookup_mass_node(mass_names, mass1);
+      m2 = lookup_mass_node(mass_names, mass2);
+      m3 = lookup_mass_node(mass_names, mass3);
+      if ( (m1 == NULL) || (m2 == NULL) || (m3 == NULL) ) {
+        fprintf(stderr,"parse_structure_from_file: Could not find masses: %s %s %s\n", mass1, mass2, mass3);
+        return false;
+      }
+
+      // Compute the hinge spring constant based on mass distance if we weren't
+      // told the distance.  We use the distance from the first mass to the
+      // third.
+      if (ret == 4) {
+        k = hinge_constant_over_length / mass_distance(m1, m3);
+      }
+
+      // Add the specified hinge.
+      if (add_hinge(&hinges, k, m1, m2, m3) != 0) {
+        fprintf(stderr,"parse_structure_from_file: Could not add hinge\n");
+        return false;
+      }
+      printf("XXX Warning: Hinge code is broken and likely to blow up.\n");
 
     } else if (strcmp(s1, "general_strain_force_curve") == 0) {
 
