@@ -10,8 +10,16 @@
 #include <stdio.h>
 #include <math.h>
 #include <time.h>
+
+#ifdef _WIN32
 #include <GL/gl.h>
 #include <glut.h>
+#elif __APPLE__
+#include <GLUT/glut.h>
+#include <CoreFoundation/CFURL.h>
+#include <CoreFoundation/CFBUNDLE.h>
+#endif
+
 #include "massmesh.h"
 #include "graphics.h"
 
@@ -322,13 +330,16 @@ int main(unsigned argc, const char *argv[])
   }
 
   // Read the structure description from the configuration file.
+
   FILE *f = fopen(infile_name, "r");
+
   if (f == NULL) {
     char s[1024];
     sprintf(s, "Could not open configuration file '%s' for reading", infile_name);
     perror(s);
     exit(-3);
   }
+
   step_and_save.file_name = NULL;
   if (!parse_structure_from_file(f, &mlist, &slist, &gslist, &hlist, &step_and_save)) {
     fprintf(stderr,"Cannot parse %s\n", infile_name);

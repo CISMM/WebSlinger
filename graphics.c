@@ -6,9 +6,18 @@
 
 #include <stdio.h>
 #include <math.h>
+
+#ifdef _WIN32
 #include <GL/gl.h>
 #include <GL/glu.h>
 #include <glut.h>
+
+#elif __APPLE__
+//#include <OpenGL/gl.h>
+//#include <OpenGL/glu.h>
+#include <GLUT/glut.h>
+#endif
+
 #include "massmesh.h"
 #include "graphics.h"
 
