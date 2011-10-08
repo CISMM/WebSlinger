@@ -24,8 +24,8 @@ SET(HEADERS
 SET(APP_NAME "webslinger")
 
 IF(APPLE)
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Xarch_x86_64 -mmacosx-version-min=10.5 -arch x86_64")
-SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -headerpad_max_install_names -Xarch_x86_64 -mmacosx-version-min=10.5 -arch x86_64")
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mmacosx-version-min=10.5 -arch x86_64 -arch i386")
+SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -headerpad_max_install_names -mmacosx-version-min=10.5 -arch x86_64 -arch i386")
 
 SET_SOURCE_FILES_PROPERTIES(${SRC_C} PROPERTIES LANGUAGE CXX)
 add_executable(${APP_NAME}
