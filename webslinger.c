@@ -309,13 +309,17 @@ int main(unsigned argc, const char *argv[])
 {
   // File name to read, defaults to webslinger.cfg
   const char  *infile_name = "webslinger.cfg";
-
+  
   // Command-line parsing
   unsigned  i;
   unsigned  real_params = 0;  //< Number of non-flag parameters
   for (i = 1; i < argc; i++) {
     if (!strcmp(argv[i],"-help")) {
       Usage(argv[0]);
+#ifdef __APPLE__
+    } else if (argv[i][0]=='-' && argv[i][1]=='p' && argv[i][2]=='s' && argv[i][3]=='n') {
+		continue;
+#endif
     } else if (argv[i][0] == '-') {
       Usage(argv[0]);
     } else {
@@ -329,8 +333,22 @@ int main(unsigned argc, const char *argv[])
     }
   }
 
-  // Read the structure description from the configuration file.
+  // Change working directory to Resources folder
+#ifdef __APPLE__
+    CFBundleRef mainBundle = CFBundleGetMainBundle();
+    CFURLRef resourcesURL = CFBundleCopyResourcesDirectoryURL(mainBundle);
+    char path[PATH_MAX];
+    if (!CFURLGetFileSystemRepresentation(resourcesURL, TRUE, (UInt8 *)path, PATH_MAX)) // Error: expected unqualified-id before 'if'
+    {
+        // error!
+    }
+    CFRelease(resourcesURL);
 
+    chdir(path); // error: expected constructor, destructor or type conversion before '(' token
+    printf( "Current Path: %s\n",path); // error: expected constructor, destructor or type conversion before '<<' token
+#endif
+
+  // Read the structure description from the configuration file.
   FILE *f = fopen(infile_name, "r");
 
   if (f == NULL) {
