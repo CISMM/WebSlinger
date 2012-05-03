@@ -24,6 +24,10 @@ SET(HEADERS
 SET(APP_NAME "webslinger")
 
 IF(APPLE)
+SET(CPACK_PACKAGE_VERSION_MAJOR      0)
+SET(CPACK_PACKAGE_VERSION_MINOR      4)
+SET(CPACK_PACKAGE_VERSION_PATCH      1)
+
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mmacosx-version-min=10.5 -arch x86_64 -arch i386")
 SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -headerpad_max_install_names -mmacosx-version-min=10.5 -arch x86_64 -arch i386")
 
