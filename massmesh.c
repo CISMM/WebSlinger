@@ -1100,7 +1100,7 @@ MASS_node *lookup_mass_node(const vector<MASS_NAME> n, const char *name)
 {
   vector<MASS_NAME>::const_iterator i;
   for (i = n.begin(); i != n.end(); i++) {
-    if (strcmp(name, i->name()) == NULL) {
+    if (strcmp(name, i->name()) == 0) {
       // Found it!
       return i->node();
     }
@@ -1132,7 +1132,7 @@ GENERAL_SPRING_TABLE_ENTRY *lookup_force_curve(const vector<FORCE_CURVE_NAME> n,
 {
   vector<FORCE_CURVE_NAME>::const_iterator i;
   for (i = n.begin(); i != n.end(); i++) {
-    if (strcmp(name, i->name()) == NULL) {
+    if (strcmp(name, i->name()) == 0) {
       // Found it!
       return i->table();
     }
