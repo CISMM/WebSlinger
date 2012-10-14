@@ -1,7 +1,6 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
 PROJECT(WEBSLINGER)
 
-
 IF(NOT GLUT_LIBRARIES)
 FIND_PACKAGE(GLUT)
 ENDIF(NOT GLUT_LIBRARIES)
@@ -25,6 +24,7 @@ SET(APP_NAME "webslinger")
 
 IF(APPLE)
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mmacosx-version-min=10.5 -arch x86_64 -arch i386")
+SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -mmacosx-version-min=10.5 -arch x86_64 -arch i386")
 SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -headerpad_max_install_names -mmacosx-version-min=10.5 -arch x86_64 -arch i386")
 
 SET_SOURCE_FILES_PROPERTIES(${SRC_C} PROPERTIES LANGUAGE CXX)
@@ -43,6 +43,10 @@ target_link_libraries( ${APP_NAME}
 #	include(BundleUtilities)
 #	fixup_bundle( \"${CMAKE_BINARY_DIR}/${APP_NAME}.app\" \"\" \"\" )
 #          " COMPONENT Runtime )
+
 ENDIF(APPLE)
 
+add_executable(meshmaker meshmaker.c)
+
 INCLUDE(CPACK)
+

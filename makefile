@@ -1,7 +1,10 @@
 CC = cc
 CFLAGS = -O3 -mpentium
 
-all: testmesh showmesh cube
+all: meshmaker testmesh showmesh cube
+
+meshmaker: meshmaker.o
+	$(CC) $(CFLAGS) -o meshmaker meshmaker.o -lm
 
 testmesh: massmesh.o testmesh.o
 	$(CC) $(CFLAGS) -o testmesh massmesh.o testmesh.o -lm
