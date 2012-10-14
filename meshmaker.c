@@ -116,9 +116,9 @@ int main(unsigned argc, const char *argv[])
 
   // Open the structure and set default parameters.
   fprintf(f, "structure {\n");
-  fprintf(f, "  mass_damping %lf\n", g_mass_damping);
-  fprintf(f, "  spring_constant_over_length %lf\n", g_spring_constant_over_length);
-  fprintf(f, "  rest_length_fraction %lf\n", g_rest_length_fraction);
+  fprintf(f, "  mass_damping %lg\n", g_mass_damping);
+  fprintf(f, "  spring_constant_over_length %lg\n", g_spring_constant_over_length);
+  fprintf(f, "  rest_length_fraction %lg\n", g_rest_length_fraction);
   fprintf(f, "\n");
 
   // Put in the masses.  All masses are named by their coordinates,
@@ -129,12 +129,12 @@ int main(unsigned argc, const char *argv[])
   for (i = 0; i < g_NX; i++) {
     for (j = 0; j < g_NY; j++) {
       if ( (i == 0) || (j == 0) || (i == g_NX-1) || (j == g_NY-1) ) {
-	fprintf(f, "  mass_radius %lf\n", g_edge_mass_radius);
-	fprintf(f, "  mass\t%dx%d\t%lf\t%lf\t%lf\t%lf\n", i, j, g_edge_mass,
+	fprintf(f, "  mass_radius %lg\n", g_edge_mass_radius);
+	fprintf(f, "  mass\t%dx%d\t%lg\t%lg\t%lg\t%lg\n", i, j, g_edge_mass,
 			X(i), Y(j), 0.0);
       } else if (g_crosslinks[i + j*g_NX] == 1) {
-	fprintf(f, "  mass_radius %lf\n", g_mass_radius);
-	fprintf(f, "  mass\t%dx%d\t%lf\t%lf\t%lf\t%lf\n", i, j, g_mass,
+	fprintf(f, "  mass_radius %lg\n", g_mass_radius);
+	fprintf(f, "  mass\t%dx%d\t%lg\t%lg\t%lg\t%lg\n", i, j, g_mass,
 			X(i), Y(j), 0.0);
       }
     }
@@ -177,7 +177,6 @@ int main(unsigned argc, const char *argv[])
   fprintf(f, "\n");
 
   // End of structure.
-  fprintf(f, "\n");
   fprintf(f, "}\n");
 
   //-------------------------------------------------------------
