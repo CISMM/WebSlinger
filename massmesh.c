@@ -32,6 +32,7 @@ const double M_PI = 2*acos(0.0);
 #pragma warning( disable : 4996 )
 
 inline	double	sqr(double a) { return a*a; }
+extern SPRING_node* remove_nd;
 
 //#define	DEBUG
 
@@ -104,7 +105,7 @@ int	add_spring(SPRING_node **headptr, double rest, double k,
 	news->fbreak = fbreak;
 	news->m1 = m1;
 	news->m2 = m2;
-
+	news->flag = VALID;
 	return(0);	/* SUCCESS */
 
 } /* end of add_spring() */
@@ -235,7 +236,11 @@ int apply_springs(SPRING_node **sh)
 
   last = cur = *sh;
   while (cur != NULL) {	/* Do for each spring in the list */
-
+	  if (cur->flag == INVALID) {
+		  last = cur;
+		  cur = cur->next;
+		  continue;
+	}
     /* Find the distance vector from one to the other */
     dx = (cur->m2->x) - (cur->m1->x);
     dy = (cur->m2->y) - (cur->m1->y);

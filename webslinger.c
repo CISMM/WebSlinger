@@ -10,6 +10,7 @@
 #include <stdio.h>
 #include <math.h>
 #include <time.h>
+#include <limits.h>
 
 #ifdef _WIN32
 #include <GL/gl.h>
@@ -134,13 +135,28 @@ void	simulate_and_draw(void)
 
 void keyboardCallbackForGLUT(unsigned char key, int x, int y)
 {
+  SPRING_node* p = slist;
   switch (key) {
     case 'q':
     case 'Q':
     case 27: // Escape key
       exit(0);
       break;
-
+	case 'c':
+	case 'C':
+		while (p != NULL) {
+			if (p->flag == SELECTED)
+				p->flag = INVALID;
+			p = p->next;
+		}
+		break;
+	case 'r':
+	case 'R':
+		while (p != NULL) {
+			p->flag = VALID;
+			p = p->next;
+		}
+		break;
     case 's':
     case 'S':
       // Save the coordinates of all of the points into the CSV output file.
@@ -172,6 +188,7 @@ void keyboardCallbackForGLUT(unsigned char key, int x, int y)
       }
 
       break;
+	
   }
 }
 
@@ -234,6 +251,20 @@ inline double dist2(double x1, double y1, double x2, double y2)
   return (x2-x1)*(x2-x1) + (y2-y1)*(y2-y1);
 }
 
+double shortest_dist_to_spring(double x, double y, SPRING_node* sp)
+{
+	double x1 = sp->m1->x, y1 = sp->m1->y;
+	double x2 = sp->m2->x, y2 = sp->m2->y;
+	const float l2 = dist2(x1, y1, x2, y2);
+	if (l2 == 0.0) return dist2(x, y, x1, y1);
+	float dot = (x2 - x1) * (x - x1) + (y2 - y1) * (y - y1);
+	const float t = max(0, min(1, dot / l2));
+	int projection[2];
+	float projection_x = x1 + t * (x2 - x1);
+	float projection_y = y1 + t * (y2 - y1);
+	return dist2(x, y, projection_x, projection_y);
+}
+
 void mouseCallbackForGLUT(int button, int state, int raw_x, int raw_y)
 {
   double x = mouse_x_in_world(raw_x);
@@ -281,6 +312,29 @@ void mouseCallbackForGLUT(int button, int state, int raw_x, int raw_y)
 
     case GLUT_RIGHT_BUTTON:
       if (state == GLUT_DOWN) {
+		  if (slist == NULL) break;
+		  SPRING_node* p = slist;
+		  SPRING_node* min_p = p;
+		  double min_d = INT_MAX;
+		  while (p != NULL) {
+			  if (p->flag == INVALID) {
+				  p = p->next;
+				  continue;
+			  }
+			  double d = shortest_dist_to_spring(x, y, p);
+			  if ( d < min_d) {
+				  min_d = d;
+				  min_p = p;
+			  }
+			  p = p->next;
+		  }
+		  if (min_d < INT_MAX)
+		  {
+			  if (min_p->flag == VALID)
+				  min_p->flag = SELECTED;
+			  else if (min_p->flag == SELECTED)
+				  min_p->flag = VALID;
+		  }
       }
       break;
   }
@@ -375,7 +429,7 @@ int main(unsigned argc, const char *argv[])
   sprintf(g_csv_outfile_name, "%s.csv", infile_name);
   unlink(g_csv_outfile_name);
 
-  init_graphics("Webslinger v4.0: Pull with mouse, Q quit, S save coords", display_func);
+  init_graphics("Webslinger v4.1: Pull with mouse, Q quit, S save coords, Righ-Click select springs, C cut, R reset", display_func);
   glutMotionFunc(motionCallbackForGLUT);
   glutMouseFunc(mouseCallbackForGLUT);
   glutKeyboardFunc(keyboardCallbackForGLUT);

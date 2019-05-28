@@ -28,6 +28,7 @@ int getmaxx(void) { return SCREEN_X; }
 int getmaxy(void) { return SCREEN_Y; }
 
 double	SCREEN_SCALE = 0.004;
+extern SPRING_node* remove_nd;
 
 void resize_window(int w, int h)
 {
@@ -73,10 +74,22 @@ int	draw_masses(const MASS_node *mn)
 int	draw_springs(const SPRING_node *sn)
 {
     if (sn != NULL) {
+	float currentColor[4];
+	glGetFloatv(GL_CURRENT_COLOR, currentColor);
 	glBegin(GL_LINES);
 	while (sn != NULL) {
+		if (sn->flag == INVALID) {
+			sn = sn->next;
+			continue;
+		}
+		else if (sn->flag == SELECTED) {
+			glColor3f(1, 0.5, 0);
+		}
 		vertex(sn->m1);
 		vertex(sn->m2);
+		if (sn->flag == SELECTED) {
+			glColor3f(currentColor[0], currentColor[1], currentColor[2]);
+		}
 		sn = sn->next;
 	}
 	glEnd();

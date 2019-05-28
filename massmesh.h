@@ -50,6 +50,7 @@ typedef	struct	MASS {	/* Used to allow a pointer to this type in struct */
  * a null next pointer.
  */
 
+enum Flag { VALID, INVALID, SELECTED };
 typedef struct	SPRING { /* Used to allow a pointer to this type in struct */
 	  double rest;		/* The rest length of the spring */
 	  double k;		/* The spring constant of the spring */
@@ -57,6 +58,7 @@ typedef struct	SPRING { /* Used to allow a pointer to this type in struct */
 	  MASS_node *m1;	/* One mass attatched to the spring */
 	  MASS_node *m2;	/* The other mass attatched to the spring */
 	  struct SPRING	*next;	/* The next spring in the list */
+	  enum Flag flag;
 	} SPRING_node;
 
 
