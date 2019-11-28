@@ -1,4 +1,4 @@
-#Project Description
+# Project Description
 
 Our goal in this project was to simulate a flexible object in real time and to provide force feedback based on the simulation.  The fact that we wanted the simulation to run in real time dictated that we should have a model that was quick to compute, which in turn implied that we model a one- dimensional flexible object such as a rubber band.  We also wanted to provide things besides the rubber band in the environment with which the user could interact.  For these objects we chose room walls, a free mass that could be picked up and tossed about, and another mass that swings back and forth in the world in simple harmonic motion.  See figure 1 for a picture of the environment.
 
@@ -10,7 +10,7 @@ The graphic display in our model shows a chain of spheres, with one centered at 
 
 Our model also provides for real time control of the gravity in the simulation, the viscosity of the medium in which the masses move, the amount of movement in world space a given ARM movement will produce, the magnitude of the forces that will be felt by the user, the maximum distance the user can be from an object when it is grabbed, and the time step over which the simulation is performed.  All of these parameters are varied by using six resistor pots that are mounted on the lower part of the ARM, just above the hand grip.  This allows the user to feel the effects of many different configurations and to compare them in real time.  It also allows a user to study the effects of time step and viscosity on the stability of this type of simulation.
 
-#How the modelling is done
+# How the modelling is done
 
 Movable objects in our environment are modelled as a group of masses, any two of which may be connected by one or more springs.  The simulation proceeds be first computing all of the forces acting on each mass and then by moving all of the masses over a time interval assuming that the forces remain constant over that interval.
 
@@ -26,12 +26,12 @@ Once the forces exerted by the springs and the walls have accumulated in the mas
 
 The modelling code also provides for hinges, which act on triples of masses and tend to keep the center one on the line between the other two, but this was not implemented in our demonstration because it reduced the flexibility of the string and because the added forces tended to make the model unstable at a smaller time step.
 
-#How the arm is tied in
+# How the arm is tied in
 
 The arm is used to move the mass at one end of the rubber band by setting the position and velocity of the end mass to match that of the arm at the beginning of each simulation loop.  The other masses in the string follow along because they are pulled by the springs connecting the other masses to the head mass.
 
 The forces applied by the springs and by the walls are computed as described above, and then the forces on the head mass are read and transmitted to the user through the function Send_Handgrip_Forces(), which is provided by the ARM library code.  The forces on that mass are then set to zero so that the simulation code will not attempt to move the mass over the next time step.  In this way the user can feel the same forces that they would if they were actually holding on to the head mass in the rubber band.  Forces from the other masses in the rubber band are transmitted by the spring from the head mass to the second, and forces from the walls are also felt.
 
-#Files used in the modelling
+# Files used in the modelling
 
 The file massmesh.h contains the definitions of the constants and types that are used in the simulation, as well as declaring the functions that can be called to perform the simulation steps.  The file massmesh.c contains the code that actually performs the simulation.  The file armstring.c has the main routine that ties together the use of the ARM, the pxpl4 display, and the simulation into one package.
