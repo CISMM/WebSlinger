@@ -91,7 +91,7 @@ int main(unsigned argc, const char *argv[])
   // Generate an NxM array to keep track of which entries have crosslinks.
   // Fill in its entries with 0 or 1 for whether it has a link or not.
   // The border entries always have crosslinks.
-  g_crosslinks = malloc(g_NX * g_NY * sizeof(int));
+  g_crosslinks = (int*)malloc(g_NX * g_NY * sizeof(int));
   if (g_crosslinks == NULL) {
 	fprintf(stderr,"Out of memory\n");
 	return -4;
