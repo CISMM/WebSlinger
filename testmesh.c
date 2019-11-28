@@ -7,6 +7,7 @@
  */
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <math.h>
 #include <time.h>
 #include "massmesh.h"
@@ -39,8 +40,8 @@ main()
 	printf("Starting the timing loop\n");
 	loop = 0;
 	time(&t1);
-	while (loop < 50000) {
-		apply_springs(sh);
+	while (loop < 5000000) {
+		apply_springs(&sh);
 		mh->x = AMP * sin(ANGLE*loop);
 		mh->vx= AMP * cos(ANGLE*loop);
 		mh->y = mh->z = mh->vy = mh->vz = 0.0;
@@ -50,7 +51,7 @@ main()
 	}
 	time(&t2);
 	if (t2 != t1) {
-		printf("Rate: %d per second\n", loop/(t2-t1));
+		printf("Rate: %ld per second\n", loop/(t2-t1));
 	} else {
 		printf("No time passed...\n");
 	}
