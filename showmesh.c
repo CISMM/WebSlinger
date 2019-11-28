@@ -91,7 +91,7 @@ void	simulate_and_draw(void)
 		exit(-1);
 	}
       for (k = 0; k < SIMS_PER_DRAW; k++) {
-	apply_springs(sh);
+	apply_springs(&sh);
 	apply_hinges(hh);
 	if (UNTIE == 0) {
 		if (AMP != 0.0) {

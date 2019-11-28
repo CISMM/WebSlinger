@@ -5,12 +5,18 @@
 
 #ifdef _WIN32
 #include <windows.h>
+#else
+#include <unistd.h>
+float max(float a, float b) { return (a>b)?a:b; }
+float min(float a, float b) { return (a<b)?a:b; }
 #endif
 
 #include <stdio.h>
 #include <math.h>
 #include <time.h>
 #include <limits.h>
+#include <string.h>
+#include <stdlib.h>
 
 #ifdef _WIN32
 #include <GL/gl.h>
@@ -19,6 +25,8 @@
 #include <GLUT/glut.h>
 #include <CoreFoundation/CFURL.h>
 #include <CoreFoundation/CFBUNDLE.h>
+#else
+#include <GL/glut.h>
 #endif
 
 #include "massmesh.h"

@@ -11,7 +11,13 @@
 #include <math.h>
 #include <time.h>
 #include <GL/gl.h>
+#ifdef _WIN32
 #include <glut.h>
+#elif __APPLE__
+#include <GLUT/glut.h>
+#else
+#include <GL/glut.h>
+#endif
 #include "massmesh.h"
 #include "graphics.h"
 
@@ -420,8 +426,9 @@ void display_func(void)
 	glutSwapBuffers();
 }
 
-void main()
+int main()
 {
 	init_graphics("Various simulations", display_func);
 	glutMainLoop();
+	return 0;
 }

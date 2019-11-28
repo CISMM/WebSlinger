@@ -1,7 +1,7 @@
 CC = g++
 CFLAGS = -O3 
 
-all: meshmaker testmesh showmesh cube
+all: meshmaker testmesh showmesh cube webslinger
 
 meshmaker: meshmaker.o
 	$(CC) $(CFLAGS) -o meshmaker meshmaker.o -lm
@@ -16,5 +16,8 @@ showmesh: massmesh.o graphics.o showmesh.o
 cube: massmesh.o graphics.o cube.o
 	$(CC) $(CFLAGS) -o cube massmesh.o cube.o graphics.o -lglut -lGLU -lGL -lm
 
+webslinger: graphics.o massmesh.o webslinger.o
+	$(CC) $(CFLAGS) -o webslinger graphics.o massmesh.o webslinger.o -lglut -lGLU -lGL -lm
+
 clean:
-	-rm *.o testmesh showmesh cube
+	-rm *.o testmesh showmesh cube webslinger
