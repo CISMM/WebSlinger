@@ -1,5 +1,5 @@
-CC = cc
-CFLAGS = -O3 -mpentium
+CC = g++
+CFLAGS = -O3 
 
 all: meshmaker testmesh showmesh cube
 
