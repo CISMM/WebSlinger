@@ -61,7 +61,7 @@ void	simulate_and_draw(void)
     if (first_time) {
 	first_time = 0;
 
-	if (make_string(NUM, &mh, &sh, &hh, MASS,DAMP, REST,SFORCE, HFORCE)) {
+	if (make_string(NUM, &mh, &sh, &hh, MASS,DAMP, REST,SFORCE, HFORCE,1e100, 2.0)) {
 		fprintf(stderr,"Error creating the string.\n");
 		exit(-1);
 	}
@@ -87,7 +87,11 @@ void	simulate_and_draw(void)
 
     for (j = 0; j < DRAWS_PER_FRAME; j++) {
 	cm = mh;
+        glColor3f(1.0f,1.0f,0.0f);
 	if (draw_masses(mh)) {
+		exit(-1);
+	}
+	if (draw_springs(sh)) {
 		exit(-1);
 	}
       for (k = 0; k < SIMS_PER_DRAW; k++) {
