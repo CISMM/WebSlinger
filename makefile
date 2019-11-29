@@ -20,4 +20,4 @@ webslinger: graphics.o massmesh.o webslinger.o
 	$(CC) $(CFLAGS) -o webslinger graphics.o massmesh.o webslinger.o -lglut -lGLU -lGL -lm
 
 clean:
-	-rm *.o testmesh showmesh cube webslinger
+	-rm *.o meshmaker testmesh showmesh cube webslinger
