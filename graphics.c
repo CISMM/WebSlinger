@@ -126,14 +126,14 @@ int	setup_graphics_frame(void)
 int	init_graphics(const char *name, Display_Func df)
 {
 	static	int	no_args = 1;
-	static	char	*fargv[1] = {"Glut_program"};
+	static	const char	*fargv[1] = {"Glut_program"};
 	int	glut_window;
 
 	//---------------------------------------------------------
 	// Ask for a window, using Glut.
 
 	static int glutAttributeList = GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH;
-	glutInit(&no_args, fargv);
+	glutInit(&no_args, const_cast<char **>(fargv));
 	glutInitDisplayMode(glutAttributeList);
 	glutInitWindowSize(SCREEN_X, SCREEN_Y);
 	glut_window = glutCreateWindow(name);

@@ -44,7 +44,7 @@ void Usage(const char *s)
   exit(-1);
 }
 
-int main(unsigned argc, const char *argv[])
+int main(int argc, const char *argv[])
 {
   // File name to write, defaults to empty
   const char  *outfile_name = "";
