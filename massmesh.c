@@ -832,7 +832,7 @@ int	make_string(int num, MASS_node **mh, SPRING_node **sh, HINGE_node **hh,
 
 	if (num >= 3) {
 		if ( (springk == 0.0) && (hingek == 0.0) ) {
-			perror("make_string (no springs or hinges)");
+			fprintf(stderr,"make_string(): no springs or hinges\n");
 			return(-1);
 		}
                 loop = 3;
