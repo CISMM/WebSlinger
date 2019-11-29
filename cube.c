@@ -401,21 +401,23 @@ void	simulate_and_draw(void)
 
     /* This section is the code being developed with an eye towards
        simulating biological fibers.
+    */
     glColor3f(1,0,0);
     simulate_and_draw_cubes();
+    /*
     glColor3f(0,1,0);
     simulate_and_draw_strings();
     glColor3f(0,0,1);
     simulate_and_draw_breaking();
-    glColor3f(1,1,0);
-    simulate_and_draw_fat();
     */
 
     /* This section is being developed with an eye towards a
        stupid Matrix knock-off.
-       */
+    glColor3f(1,1,0);
+    simulate_and_draw_fat();
     glColor3f(0,1,0);
     simulate_and_draw_snotmatrix();
+    */
 
 } /* end of simulation and drawing loop */
 
