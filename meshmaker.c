@@ -8,6 +8,11 @@
 #include <string.h>
 #include <math.h>
 
+// Visual Studio doesn't have random() defined in stdlib.h, so we use rand() instead.
+#ifndef random
+#define random(x) rand(x)
+#endif
+
 // Global variables describing default values.
 double	g_mass_damping = 1.0;
 double	g_mass_radius = 2.0;
